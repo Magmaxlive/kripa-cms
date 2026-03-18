@@ -169,9 +169,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         : "-translate-x-full"}`}>
         {/* <!-- SIDEBAR HEADER --> */}
         <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 xl:py-10">
-          <Link href="/" style={{ background: "black" }}>
-            <img src={"/images/logo/white-logo.png"} alt="Logo" priority className="dark:hidden" style={{ width: "150px", height: "auto" }} />
-            <img src={"/images/logo/white-logo.png"} alt="Logo" priority className="hidden dark:block" style={{ width: "150px", height: "auto" }} />
+          <Link href="/" >
+            <img src={"/images/logo/kripalogo.svg"} alt="Logo" priority className="dark:hidden" style={{ width: "120px", height: "auto" }} />
+            <img src={"/images/logo/kripalogo.svg"} alt="Logo" priority className="hidden dark:block" style={{ width: "120px", height: "auto" }} />
           </Link>
           <button onClick={() => setSidebarOpen(!sidebarOpen)} className="block lg:hidden">
             <svg className="fill-current" width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
