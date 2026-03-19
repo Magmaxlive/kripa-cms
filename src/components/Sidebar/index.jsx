@@ -37,6 +37,13 @@ const menuGroups = [
         label: "Contact Page",
         route: "/dashboard/contact-page",
       },
+
+      {
+        icon: (<MdOutlineSpaceDashboard size="25" />),
+        label: "Sub Services",
+        route: "/dashboard/sub-services",
+      },
+
       {
         icon: (<MdOutlineSpaceDashboard size="25" />),
         label: "Footer Links",
