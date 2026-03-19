@@ -31,11 +31,7 @@ const menuGroups = [
         label: "About Page",
         route: "/dashboard/about-page",
       },
-      {
-        icon: (<MdOutlineSpaceDashboard size="25" />),
-        label: "Page Banners",
-        route: "/dashboard/page-banners",
-      },
+      
       {
         icon: (<MdOutlineSpaceDashboard size="25" />),
         label: "Contact Page",

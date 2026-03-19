@@ -1,8 +1,8 @@
 
 "use client";
 import React, { useState } from "react";
-import ContactGeneralForm from "./ContactGeneralForm";
-import ContactCardForm from "./ContactCardForm";
+import ContactSectionForm from "./ContactGeneralForm";
+
 
 const ContactPageManager = () => {
     const [activeTab, setActiveTab] = useState("general");
@@ -12,25 +12,23 @@ const ContactPageManager = () => {
             <h2 className="text-2xl font-bold mb-6 text-black dark:text-white">Contact Page Management</h2>
 
             {/* Tabs */}
-            <div className="flex border-b border-gray-200 dark:border-strokedark mb-6">
+            <div className="flex border-b border-gray-200 dark:border-strokedark pb-3 mb-6">
                 <button
-                    className={`py-2 px-4 font-medium text-sm focus:outline-none ${activeTab === 'general' ? 'border-b-2 border-primary text-primary' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'}`}
+                    className={`px-4 py-2 rounded-md font-medium text-sm transition-colors duration-200 ${activeTab === 'general'
+                                ? "bg-primary text-white shadow-md"
+                                : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-meta-4"
+                            }`}
                     onClick={() => setActiveTab('general')}
                 >
-                    Map & Form Info
+                    Contact & Map Info
                 </button>
-                <button
-                    className={`py-2 px-4 font-medium text-sm focus:outline-none ${activeTab === 'cards' ? 'border-b-2 border-primary text-primary' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'}`}
-                    onClick={() => setActiveTab('cards')}
-                >
-                    Contact Info Cards
-                </button>
+               
             </div>
 
             {/* Content */}
             <div>
-                {activeTab === 'general' && <ContactGeneralForm />}
-                {activeTab === 'cards' && <ContactCardForm />}
+                {activeTab === 'general' && <ContactSectionForm />}
+                
             </div>
         </div>
     );
