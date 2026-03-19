@@ -4,12 +4,19 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import SidebarItem from "@/components/Sidebar/SidebarItem";
 import ClickOutside from "@/components/ClickOutside";
-import { MdOutlineSpaceDashboard } from "react-icons/md";
+import { MdOutlineSpaceDashboard} from "react-icons/md";
 import { TiMessages, TiMessage } from "react-icons/ti";
 import { AiOutlineAppstore, AiOutlineProduct, AiOutlineSetting } from "react-icons/ai";
 import { PiNewspaper } from "react-icons/pi";
-import { SlDocs } from "react-icons/sl";
 import { TbMessage2Plus } from "react-icons/tb";
+import { GoPackage } from "react-icons/go";
+import { IoMdBook } from "react-icons/io";
+import { LuLayoutPanelTop } from "react-icons/lu";
+
+
+
+
+
 // import { MdOutlineRecordVoiceOver, MdOutlineEventSeat } from "react-icons/md";
 // import { AiOutlineSolution } from "react-icons/ai";
 // import { FaPeoplePulling } from "react-icons/fa6";
@@ -39,51 +46,51 @@ const menuGroups = [
       },
 
       {
-        icon: (<MdOutlineSpaceDashboard size="25" />),
+        icon: (<GoPackage size="25" />),
         label: "Sub Services",
         route: "/dashboard/sub-services",
       },
 
       {
-        icon: (<MdOutlineSpaceDashboard size="25" />),
+        icon: (<IoMdBook size="25" />),
         label: "Blogs",
         route: "/dashboard/blogs",
       },
 
-      {
-        icon: (<MdOutlineSpaceDashboard size="25" />),
-        label: "Footer Links",
-        route: "/dashboard/footer-links",
-      },
-      {
-        icon: (<AiOutlineSetting size="25" />),
-        label: "Settings",
-        route: "/dashboard/settings",
-      },
-      {
-        icon: (<SlDocs size="25" />),
-        label: "Dynamic Pages",
-        route: "#",
-        children: [
-          { label: "Create", route: "/dashboard/dynamic-pages/create" },
-          { label: "View", route: "/dashboard/dynamic-pages/view" },
-        ],
-      },
+      // {
+      //   icon: (<MdOutlineSpaceDashboard size="25" />),
+      //   label: "Footer Links",
+      //   route: "/dashboard/footer-links",
+      // },
+      // {
+      //   icon: (<AiOutlineSetting size="25" />),
+      //   label: "Settings",
+      //   route: "/dashboard/settings",
+      // },
+      // {
+      //   icon: (<SlDocs size="25" />),
+      //   label: "Dynamic Pages",
+      //   route: "#",
+      //   children: [
+      //     { label: "Create", route: "/dashboard/dynamic-pages/create" },
+      //     { label: "View", route: "/dashboard/dynamic-pages/view" },
+      //   ],
+      // },
 
     ],
   },
 
   {
-    name: "NOTIFICATIONS",
+    name: "HEADER & FOOTER",
     menuItems: [
       {
-        icon: (<TiMessages size="25" />),
-        label: "Messages",
+        icon: (<LuLayoutPanelTop size="25" />),
+        label: "Header",
         route: "/dashboard/messages",
       },
       {
-        icon: (<TbMessage2Plus size="25" />),
-        label: "News Letter",
+        icon: (<LuLayoutPanelTop size="25" />),
+        label: "Footer",
         route: "/dashboard/news-letter",
       },
     ],

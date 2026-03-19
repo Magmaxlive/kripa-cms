@@ -12,6 +12,39 @@
 @layer components {
 }
 
+
+.ck.ck-dropdown__panel {
+  z-index: 99999 !important;
+}
+ 
+/* Keep the balloon toolbar (link, image) above modals too */
+.ck.ck-balloon-panel {
+  z-index: 99999 !important;
+}
+ 
+/* Prevent the toolbar itself from creating a new stacking context */
+.ck.ck-toolbar {
+  z-index: auto !important;
+}
+ 
+/* Constrain very long lists (e.g. heading styles) so they don't overflow the viewport */
+.ck.ck-list {
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+/* Sticky CKEditor toolbar inside scrollable modal */
+.ck-editor-wrapper .ck.ck-toolbar {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 10 !important;
+}
+
+/* Image resize handle visibility */
+.ck-content .image.ck-widget_selected .ck-widget__resizer {
+  display: block;
+}
+ 
 @layer utilities {
     /* Chrome, Safari and Opera */
     .no-scrollbar::-webkit-scrollbar {

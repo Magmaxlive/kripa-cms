@@ -33,7 +33,7 @@ const STATUS_OPTIONS = [
 ];
 
 // ---------- MODAL ----------
-const Modal = ({ isOpen, onClose, title, children, maxWidth = "max-w-3xl" }) => {
+const Modal = ({ isOpen, onClose, title, children, maxWidth = "max-w-7xl" }) => {
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" style={{ zIndex: 9999 }}>
@@ -88,14 +88,59 @@ const RichTextField = ({ label, value, onChange, editorKey, error, required }) =
     <label className="text-sm font-medium">
       {label}{required && <span className="text-red-500 ml-1">*</span>}
     </label>
-    <div className={`border rounded-md overflow-hidden dark:border-strokedark
+    <div className={`ck-editor-wrapper border rounded-md overflow-visible dark:border-strokedark
       [&_.ck-editor__editable]:min-h-[320px] [&_.ck-editor__editable]:text-sm [&_.ck-editor__editable]:px-4
       [&_.ck-editor__editable]:dark:bg-meta-4 [&_.ck-toolbar]:dark:bg-boxdark [&_.ck-toolbar]:dark:border-strokedark
+      [&_.ck-toolbar]:sticky [&_.ck-toolbar]:top-0 [&_.ck-toolbar]:z-10
       ${error ? "border-red-400" : "border-gray-300"}`}>
       <CKEditor
-        key={editorKey} editor={ClassicEditor} data={value}
+        key={editorKey}
+        editor={ClassicEditor}
+        data={value}
         onChange={(_event, editor) => onChange(editor.getData())}
-        config={{ toolbar: ["heading","|","bold","italic","underline","|","bulletedList","numberedList","|","blockQuote","link","|","undo","redo"] }}
+        onReady={(editor) => {
+          // ── Custom upload adapter ──
+          class UploadAdapter {
+            constructor(loader) { this.loader = loader; }
+            upload() {
+              return this.loader.file.then((file) => {
+                const fd = new FormData();
+                fd.append("upload", file);
+                return axios
+                  .post(`${baseURL}/upload-image/`, fd, {
+                    headers: { Authorization: `Bearer ${authToken}`, "Content-Type": "multipart/form-data" },
+                    onUploadProgress: (e) => { this.loader.uploadTotal = e.total; this.loader.uploaded = e.loaded; },
+                  })
+                  .then((res) => ({ default: res.data.url }));
+              });
+            }
+            abort() {}
+          }
+          editor.plugins.get("FileRepository").createUploadAdapter = (loader) => new UploadAdapter(loader);
+        }}
+        config={{
+          toolbar: [
+            "heading", "|",
+            "bold", "italic", "underline", "|",
+            "bulletedList", "numberedList", "|",
+            "blockQuote", "link", "|",
+            "insertTable", "mediaEmbed", "|",
+            "imageUpload", "|",
+            "undo", "redo",
+          ],
+          image: {
+            toolbar: [
+              "imageStyle:alignLeft",
+              "imageStyle:alignCenter",
+              "imageStyle:alignRight",
+              "|",
+              "imageTextAlternative",
+            ],
+          },
+          table: {
+            contentToolbar: ["tableColumn", "tableRow", "mergeTableCells"],
+          },
+        }}
       />
     </div>
     {error && <p className="text-xs text-red-500">{error}</p>}
@@ -233,7 +278,8 @@ const BlogModal = ({ isOpen, onClose, data, categories, authors }) => {
     setErrors({});
     const fd = new FormData();
     if (isEdit) fd.append("id", data.id);
-    Object.entries(form).forEach(([k, v]) => { if (v !== "") fd.append(k, v); });
+    // Always append all fields including empty strings so cleared fields get saved
+    Object.entries(form).forEach(([k, v]) => fd.append(k, v ?? ""));
     if (imageFile) fd.append("image", imageFile);
     mutation.mutate(fd);
   };
@@ -295,16 +341,7 @@ const BlogModal = ({ isOpen, onClose, data, categories, authors }) => {
 
         <hr className="border-gray-200 dark:border-strokedark" />
 
-        {/* ── Optional video ── */}
-        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Video (optional)</p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Field label="Video Title" id="video_title" value={form.video_title}
-            onChange={set("video_title")} placeholder="e.g. Watch our overview" error={errors.video_title} />
-          <Field label="Video Link" id="video_link" value={form.video_link}
-            onChange={set("video_link")} placeholder="https://youtube.com/watch?v=..." error={errors.video_link} />
-        </div>
-
+        
       </div>
       <ModalActions onClose={onClose} onSubmit={handleSubmit} submitting={mutation.isPending} isEdit={isEdit} />
     </Modal>

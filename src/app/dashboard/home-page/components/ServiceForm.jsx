@@ -7,7 +7,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-
 // ---------- API FUNCTIONS ----------
 const fetchServiceSection = () =>
   axios.get(`${baseURL}/service-section/`).then((res) => res.data);
@@ -99,18 +98,20 @@ const TextareaField = ({ label, id, value, onChange, placeholder, rows = 3, erro
   </div>
 );
 
-// ── RichTextField now supports error + required ──
 const RichTextField = ({ label, value, onChange, editorKey, error, required }) => (
   <div className="flex flex-col gap-1.5">
     <label className="text-sm font-medium">
       {label}{required && <span className="text-red-500 ml-1">*</span>}
     </label>
-    <div className={`border rounded-md overflow-hidden dark:border-strokedark
+    <div className={`border rounded-md overflow-visible dark:border-strokedark
       [&_.ck-editor__editable]:min-h-[320px] [&_.ck-editor__editable]:text-sm [&_.ck-editor__editable]:px-4
       [&_.ck-editor__editable]:dark:bg-meta-4 [&_.ck-toolbar]:dark:bg-boxdark [&_.ck-toolbar]:dark:border-strokedark
+      [&_.ck-toolbar]:sticky [&_.ck-toolbar]:top-0 [&_.ck-toolbar]:z-10
       ${error ? "border-red-400" : "border-gray-300"}`}>
       <CKEditor
-        key={editorKey} editor={ClassicEditor} data={value}
+        key={editorKey}
+        editor={ClassicEditor}
+        data={value}
         onChange={(_event, editor) => onChange(editor.getData())}
         config={{ toolbar: ["heading","|","bold","italic","underline","|","bulletedList","numberedList","|","blockQuote","link","|","undo","redo"] }}
       />
@@ -299,7 +300,6 @@ const CategoryModal = ({ isOpen, onClose, data }) => {
     if (!isEdit && !files.cover_image)  e.cover_image       = "Cover image is required.";
     if (!form.minor_heading.trim())     e.minor_heading     = "Minor heading is required.";
     if (!form.main_heading.trim())      e.main_heading      = "Main heading is required.";
-    // Strip HTML tags to check if CKEditor content is truly empty
     if (!form.brief_description.replace(/<[^>]*>/g, "").trim()) e.brief_description = "Brief description is required.";
     return e;
   };
