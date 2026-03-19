@@ -46,6 +46,12 @@ const menuGroups = [
 
       {
         icon: (<MdOutlineSpaceDashboard size="25" />),
+        label: "Blogs",
+        route: "/dashboard/blogs",
+      },
+
+      {
+        icon: (<MdOutlineSpaceDashboard size="25" />),
         label: "Footer Links",
         route: "/dashboard/footer-links",
       },
