@@ -12,13 +12,13 @@ import DynamicIcon from '../../home-page/components/DynamicIcon'
 // ─────────────────────────────────────────────
 const authHeaders = { Authorization: `Bearer ${authToken}` };
 
-const fetchSection  = () => axios.get(`${baseURL}/mission_vission_section/`).then(r => r.data);
-const fetchCards    = () => axios.get(`${baseURL}/mission_vission_items/`).then(r => r.data);
+const fetchSection  = () => axios.get(`${baseURL}/core_values_section/`).then(r => r.data);
+const fetchCards    = () => axios.get(`${baseURL}/core_values_items/`).then(r => r.data);
 
-const saveSection   = ({ id, ...data }) => id ? axios.patch(`${baseURL}/mission_vission_section/${id}/`, data, { headers: authHeaders }) : axios.post(`${baseURL}/whychoose/`, data, { headers: authHeaders });
-const createCard    = (data) => axios.post(`${baseURL}/mission_vission_items/`, data, { headers: authHeaders });
-const updateCard    = ({ id, ...data }) => axios.patch(`${baseURL}/mission_vission_items/${id}/`, data, { headers: authHeaders });
-const deleteCard    = (id) => axios.delete(`${baseURL}/mission_vission_items/${id}/`, { headers: authHeaders });
+const saveSection   = ({ id, ...data }) => id ? axios.patch(`${baseURL}/core_values_section/${id}/`, data, { headers: authHeaders }) : axios.post(`${baseURL}/whychoose/`, data, { headers: authHeaders });
+const createCard    = (data) => axios.post(`${baseURL}/core_values_items/`, data, { headers: authHeaders });
+const updateCard    = ({ id, ...data }) => axios.patch(`${baseURL}/core_values_items/${id}/`, data, { headers: authHeaders });
+const deleteCard    = (id) => axios.delete(`${baseURL}/core_values_items/${id}/`, { headers: authHeaders });
 
 // ─────────────────────────────────────────────
 // SHARED UI PRIMITIVES
@@ -217,7 +217,7 @@ const CardModal = ({ isOpen, onClose, data }) => {
 
 
 
-const MissionVisionForm = () => {
+const TeamSection = () => {
   const queryClient = useQueryClient();
 
   const [sectionOpen, setSectionOpen] = useState(false);
@@ -241,7 +241,7 @@ const MissionVisionForm = () => {
       <div className="flex flex-col gap-8">
 
         {/* Section header */}
-        <SectionCard className="bg-white dark:bg-boxdark rounded-lg shadow-default p-6" title="Mission vission — Section" onEdit={() => setSectionOpen(true)} loading={loadingSec}>
+        <SectionCard className="bg-white dark:bg-boxdark rounded-lg shadow-default p-6" title="Core values — Section" onEdit={() => setSectionOpen(true)} loading={loadingSec}>
           <div className="flex flex-col gap-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <DisplayField label="Minor Heading" value={sectionData?.minor_heading} />
@@ -255,7 +255,7 @@ const MissionVisionForm = () => {
        
 
         {/* Cards grid */}
-        <ListCard className="bg-white dark:bg-boxdark rounded-lg shadow-default p-6" title="Mission Vission items" onAdd={() => { setSelCard(null); setCardOpen(true); }} loading={loadingCards} empty={cards.length === 0}>
+        <ListCard className="bg-white dark:bg-boxdark rounded-lg shadow-default p-6" title="Core Value items" onAdd={() => { setSelCard(null); setCardOpen(true); }} loading={loadingCards} empty={cards.length === 0}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {cards.map(card => (
               <div key={card.id} className="group relative rounded-xl border border-gray-200 dark:border-strokedark shadow-sm hover:shadow-md transition-shadow bg-white dark:bg-meta-4 p-5 flex flex-col gap-2">
@@ -282,4 +282,4 @@ const MissionVisionForm = () => {
   );
 };
 
-export default MissionVisionForm;
+export default TeamSection;

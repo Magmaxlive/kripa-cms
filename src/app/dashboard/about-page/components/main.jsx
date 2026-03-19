@@ -3,9 +3,10 @@
 import React, { useState } from "react";
 import AboutFirstSectionForm from "./StoryForm";
 import MissionVisionForm from "./MissionVisionForm";
-import GeneticForm from "./GeneticForm";
-import CapabilityForm from "./CapabilityForm";
-import ServiceForm from "./ServiceForm";
+import CoreValues from "./CoreValues";
+import CapabilityForm from "./TeamForm";
+import TeamSection from "./TeamForm"
+
 
 const AboutPageManager = () => {
     const [activeTab, setActiveTab] = useState("first-section");
@@ -13,9 +14,9 @@ const AboutPageManager = () => {
     const tabs = [
         { id: "first-section", label: "First Section" },
         { id: "mission", label: "Mission & Vision" },
-        { id: "genetic", label: "Engineering DNA" },
-        { id: "capabilities", label: "Capabilities" },
-        { id: "services", label: "Services" },
+        { id: "core_values", label: "Core Values" },
+        { id: "team", label: "Team Section" },
+        
     ];
 
     return (
@@ -42,9 +43,8 @@ const AboutPageManager = () => {
             <div>
                 {activeTab === "first-section" && <AboutFirstSectionForm />}
                 {activeTab === "mission" && <MissionVisionForm />}
-                {activeTab === "genetic" && <GeneticForm />}
-                {activeTab === "capabilities" && <CapabilityForm />}
-                {activeTab === "services" && <ServiceForm />}
+                {activeTab === "core_values" && <CoreValues />}
+                {activeTab === "team" && <TeamSection />}
             </div>
         </div>
     );
