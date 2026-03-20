@@ -81,7 +81,7 @@ const menuGroups = [
   },
 
   {
-    name: "HEADER & FOOTER",
+    name: "GENERAL SETTINGS",
     menuItems: [
       {
         icon: (<LuLayoutPanelTop size="25" />),
@@ -92,6 +92,12 @@ const menuGroups = [
         icon: (<LuLayoutPanelTop size="25" />),
         label: "Footer",
         route: "/dashboard/news-letter",
+      },
+
+      {
+        icon: (<LuLayoutPanelTop size="25" />),
+        label: "Theme Settings",
+        route: "/dashboard/theme-settings",
       },
     ],
   },
