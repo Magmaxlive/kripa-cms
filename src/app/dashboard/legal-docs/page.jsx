@@ -1,16 +1,16 @@
 
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
-import AboutPageManager from "./components/main";
+import LegalDocManager from "./components/main";
 
 export const metadata = {
-    title: "About Page Management | Kripa Dashboard",
-    description: "Manage About Page Content",
+    title: "Legal Docs Management | Kripa Dashboard",
+    description: "Legal Docs Content",
 };
 
 const AboutPage = () => {
     return (
         <DefaultLayout>
-            <AboutPageManager />
+            <LegalDocManager/>
         </DefaultLayout>
     )
 }

@@ -506,3 +506,20 @@ input[type="search"]::-webkit-search-cancel-button {
 .custom-gradient-1 {
     background-image: linear-gradient(145deg, #EEF 0%, #FFF8FC 100%);;
 }
+
+
+.ck-content {
+  font-family: var(--font-plus-jakarta), Poppins, sans-serif !important;
+}
+
+.ck-content * {
+  font-family: var(--font-plus-jakarta), Poppins, sans-serif !important;
+}
+
+/* Only set left as default — no !important so inline styles can override */
+.ck-content p,
+.ck-content li,
+.ck-content h1, .ck-content h2, .ck-content h3,
+.ck-content h4, .ck-content h5, .ck-content h6 {
+  text-align: left;
+}

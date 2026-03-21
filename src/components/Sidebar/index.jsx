@@ -8,7 +8,7 @@ import { MdOutlineSpaceDashboard,MdOutlineInfo } from "react-icons/md";
 import { TiMessages, TiMessage } from "react-icons/ti";
 import { AiOutlineAppstore, AiOutlineProduct, AiOutlineSetting } from "react-icons/ai";
 import { PiNewspaper } from "react-icons/pi";
-import { TbMessage2Plus } from "react-icons/tb";
+import { IoDocumentsOutline } from "react-icons/io5";
 import { GoPackage } from "react-icons/go";
 import { IoMdBook } from "react-icons/io";
 import { LuLayoutPanelTop } from "react-icons/lu";
@@ -74,9 +74,9 @@ const menuGroups = [
       },
 
       {
-        icon: (<MdOutlineInfo  size="25" />),
-        label: "Info Pages",
-        route: "/dashboard/career-page",
+        icon: (<IoDocumentsOutline  size="25" />),
+        label: "Legal Docs",
+        route: "/dashboard/legal-docs",
       },
 
       // {
@@ -125,67 +125,70 @@ const menuGroups = [
   },
 
   {
-    name: "Products",
+    name: "FORM SUBMISSIONS",
     menuItems: [
       {
-        icon: (<AiOutlineAppstore size="25" />),
-        label: "Categories",
-        route: "#",
-        children: [
-          { label: "Create", route: "/dashboard/categories/create" },
-          { label: "View", route: "/dashboard/categories/view" },
-        ],
+        icon: (<LuLayoutPanelTop size="25" />),
+        label: "Career Form",
+        route: "/dashboard/messages",
       },
       {
-        icon: (<AiOutlineProduct size="25" />),
-        label: "Products",
-        route: "#",
-        children: [
-          { label: "Create", route: "/dashboard/products/create" },
-          { label: "View", route: "/dashboard/products/view" },
-          { label: "Page Settings", route: "/dashboard/products/page-settings" },
-        ],
+        icon: (<LuLayoutPanelTop size="25" />),
+        label: "Enquiry Form",
+        route: "/dashboard/messages",
       },
-    ],
+    ]
   },
-
 
   {
-    name: "SERVICES",
+    name: "ACCOUNT",
     menuItems: [
-
       {
-        icon: (<AiOutlineAppstore size="25" />),
-        label: "Applications",
-        route: "#",
-        children: [
-          { label: "Create", route: "/dashboard/applications/create" },
-          { label: "View", route: "/dashboard/applications/view" },
-          { label: "Page Settings", route: "/dashboard/applications/page-settings" },
-        ],
+        icon: (<LuLayoutPanelTop size="25" />),
+        label: "Change Password",
+        route: "/dashboard/messages",
       },
-
-      {
-        icon: (<AiOutlineAppstore size="25" />),
-        label: "Case Studies",
-        route: "#",
-        children: [
-          { label: "Create", route: "/dashboard/case-studies/create" },
-          { label: "View", route: "/dashboard/case-studies/view" },
-        ],
-      },
-
-      {
-        icon: (<PiNewspaper size="25" />),
-        label: "Blogs & News",
-        route: "#",
-        children: [
-          { label: "Create", route: "/dashboard/blogs/create" },
-          { label: "View", route: "/dashboard/blogs/view" },
-        ],
-      },
-    ],
+      
+    ]
   },
+
+
+  // {
+  //   name: "SERVICES",
+  //   menuItems: [
+
+  //     {
+  //       icon: (<AiOutlineAppstore size="25" />),
+  //       label: "Applications",
+  //       route: "#",
+  //       children: [
+  //         { label: "Create", route: "/dashboard/applications/create" },
+  //         { label: "View", route: "/dashboard/applications/view" },
+  //         { label: "Page Settings", route: "/dashboard/applications/page-settings" },
+  //       ],
+  //     },
+
+  //     {
+  //       icon: (<AiOutlineAppstore size="25" />),
+  //       label: "Case Studies",
+  //       route: "#",
+  //       children: [
+  //         { label: "Create", route: "/dashboard/case-studies/create" },
+  //         { label: "View", route: "/dashboard/case-studies/view" },
+  //       ],
+  //     },
+
+  //     {
+  //       icon: (<PiNewspaper size="25" />),
+  //       label: "Blogs & News",
+  //       route: "#",
+  //       children: [
+  //         { label: "Create", route: "/dashboard/blogs/create" },
+  //         { label: "View", route: "/dashboard/blogs/view" },
+  //       ],
+  //     },
+  //   ],
+  // },
   // {
   //   name: "TERMS",
   //   menuItems: [
