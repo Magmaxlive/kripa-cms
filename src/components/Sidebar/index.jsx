@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import SidebarItem from "@/components/Sidebar/SidebarItem";
 import ClickOutside from "@/components/ClickOutside";
-import { MdOutlineSpaceDashboard} from "react-icons/md";
+import { MdOutlineSpaceDashboard,MdOutlineInfo } from "react-icons/md";
 import { TiMessages, TiMessage } from "react-icons/ti";
 import { AiOutlineAppstore, AiOutlineProduct, AiOutlineSetting } from "react-icons/ai";
 import { PiNewspaper } from "react-icons/pi";
@@ -12,6 +12,10 @@ import { TbMessage2Plus } from "react-icons/tb";
 import { GoPackage } from "react-icons/go";
 import { IoMdBook } from "react-icons/io";
 import { LuLayoutPanelTop } from "react-icons/lu";
+import { PiBagSimpleBold } from "react-icons/pi";
+import { FaRegQuestionCircle } from "react-icons/fa";
+import { LuPaintbrushVertical } from "react-icons/lu";
+
 
 
 
@@ -57,6 +61,24 @@ const menuGroups = [
         route: "/dashboard/blogs",
       },
 
+      {
+        icon: (<PiBagSimpleBold size="25" />),
+        label: "Career Page",
+        route: "/dashboard/career-page",
+      },
+
+      {
+        icon: (<FaRegQuestionCircle size="25" />),
+        label: "Faq Page",
+        route: "/dashboard/career-page",
+      },
+
+      {
+        icon: (<MdOutlineInfo  size="25" />),
+        label: "Info Pages",
+        route: "/dashboard/career-page",
+      },
+
       // {
       //   icon: (<MdOutlineSpaceDashboard size="25" />),
       //   label: "Footer Links",
@@ -95,7 +117,7 @@ const menuGroups = [
       },
 
       {
-        icon: (<LuLayoutPanelTop size="25" />),
+        icon: (<LuPaintbrushVertical size="25" />),
         label: "Theme Settings",
         route: "/dashboard/theme-settings",
       },

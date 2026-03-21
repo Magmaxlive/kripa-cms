@@ -196,12 +196,12 @@ const ThemeForm = () => {
       </div>
 
       {/* Two column: pickers + preview */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      
 
         {/* Color pickers */}
         <div className="bg-white dark:bg-boxdark rounded-lg shadow-sm p-6 border border-stroke dark:border-strokedark">
           <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Color Variables</h3>
-          <div className="flex flex-col gap-3">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             {COLOR_FIELDS.map(({ key, label, description }) => (
               <ColorInput
                 key={key}
@@ -218,19 +218,11 @@ const ThemeForm = () => {
         {/* Live preview — sticky on desktop */}
         <div className="lg:sticky lg:top-6 lg:self-start flex flex-col gap-4">
 
-          {/* CSS output */}
-          <div className="bg-white dark:bg-boxdark rounded-lg shadow-sm p-6 border border-stroke dark:border-strokedark">
-            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Generated CSS</h3>
-            <pre className="text-xs font-mono text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-meta-4 rounded-md p-3 overflow-x-auto leading-relaxed">
-{`:root {
-${COLOR_FIELDS.map(({ key }) => `  --${key.replace(/_/g, "-")}: ${form[key]};`).join("\n")}
-}`}
-            </pre>
-          </div>
+          
         </div>
 
       </div>
-    </div>
+    
   );
 };
 
