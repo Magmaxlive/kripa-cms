@@ -70,7 +70,7 @@ const menuGroups = [
       {
         icon: (<FaRegQuestionCircle size="25" />),
         label: "Faq Page",
-        route: "/dashboard/career-page",
+        route: "/dashboard/faqs",
       },
 
       {

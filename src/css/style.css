@@ -16,7 +16,17 @@
 .ck.ck-dropdown__panel {
   z-index: 99999 !important;
 }
- 
+
+.ck-content {
+  font-family: var(--font-plus-jakarta), Poppins, sans-serif !important;
+  color: var(--color-text);
+  line-height: 1.7;
+}
+
+.ck-content * {
+  font-family: var(--font-plus-jakarta), Poppins, sans-serif !important;
+}
+
 /* Keep the balloon toolbar (link, image) above modals too */
 .ck.ck-balloon-panel {
   z-index: 99999 !important;
