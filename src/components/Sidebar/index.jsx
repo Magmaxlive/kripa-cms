@@ -45,7 +45,7 @@ const menuGroups = [
       
       {
         icon: (<MdOutlineSpaceDashboard size="25" />),
-        label: "Contact Page",
+        label: "Contacts",
         route: "/dashboard/contact-page",
       },
 
@@ -113,7 +113,7 @@ const menuGroups = [
       {
         icon: (<LuLayoutPanelTop size="25" />),
         label: "Footer",
-        route: "/dashboard/news-letter",
+        route: "/dashboard/footer",
       },
 
       {
