@@ -108,7 +108,7 @@ const menuGroups = [
       {
         icon: (<LuLayoutPanelTop size="25" />),
         label: "Header",
-        route: "/dashboard/messages",
+        route: "/dashboard/header",
       },
       {
         icon: (<LuLayoutPanelTop size="25" />),
@@ -215,10 +215,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         ? "translate-x-0 duration-300 ease-linear"
         : "-translate-x-full"}`}>
         {/* <!-- SIDEBAR HEADER --> */}
-        <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 xl:py-10">
+        <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 xl:py-5 mb-2">
           <Link href="/" >
-            <img src={"/images/logo/kripalogo.svg"} alt="Logo" priority className="dark:hidden" style={{ width: "120px", height: "auto" }} />
-            <img src={"/images/logo/kripalogo.svg"} alt="Logo" priority className="hidden dark:block" style={{ width: "120px", height: "auto" }} />
+            <img src={"/images/logo/kripalogo.svg"} alt="Logo" priority className="dark:hidden" style={{ width: "100px", height: "auto" }} />
+            <img src={"/images/logo/kripalogo.svg"} alt="Logo" priority className="hidden dark:block" style={{ width: "100px", height: "auto" }} />
           </Link>
           <button onClick={() => setSidebarOpen(!sidebarOpen)} className="block lg:hidden">
             <svg className="fill-current" width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
