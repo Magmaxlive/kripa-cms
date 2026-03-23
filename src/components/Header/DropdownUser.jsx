@@ -2,13 +2,19 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import ClickOutside from "@/components/ClickOutside";
+import { baseURL } from '@/auth/auth'
+ 
+
 const DropdownUser = () => {
 
-  const UserLogout = () => {
-    if (typeof window !== 'undefined') {
-        localStorage.clear();
-        window.location.href = "/auth/signin";
-    }
+  const UserLogout = async () => {
+    await fetch(`${baseURL}/auth/logout/`, {
+    method:      "POST",
+    credentials: "include",
+  });
+
+  window.location.href = "/auth/signin";
+
 }
 
 

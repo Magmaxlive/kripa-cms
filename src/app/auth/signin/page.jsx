@@ -1,56 +1,41 @@
+
+
 import React from "react";
-import Link from "next/link";
-import Image from "next/image";
-import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import Signin from "@/components/Auth/Signin";
 
+
 export const metadata = {
-  title: "Gravitex Login",
-  description: "Gravitex",
+  title: "Kripa Login",
+  description: "Kripa Financial Solutions Admin",
 };
+
 const SignIn = () => {
   return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-300 dark:bg-gray-dark px-4">
+      <div className="w-full max-w-md">
 
-    // <DefaultLayout>
-    <div className="p-4">
-      <Breadcrumb pageName="Gravitex Sign In" />
-      <div className="rounded-[10px] bg-white shadow-1 dark:bg-gray-dark dark:shadow-card">
-        <div className="flex flex-wrap items-center">
-          <div className="w-full xl:w-1/2">
-            <div className="w-full p-4 sm:p-12.5 xl:p-15">
-              <Signin />
-            </div>
-          </div>
+        {/* Logo mark */}
+        <div className="flex flex-col items-center mb-8">
+           <img src={"/images/logo/kripalogo.svg"} alt="Logo" className="mb-4" priority  style={{ width: "150px", height: "auto" }} />
 
-          <div className="hidden w-full p-7.5 xl:block xl:w-1/2">
-            <div className="custom-gradient-1 overflow-hidden rounded-2xl px-12.5 pt-12.5 dark:!bg-dark-2 dark:bg-none">
-              <Link className="mb-10 inline-block" href="/">
-                <Image className="hidden dark:block" src={"/images/logo/logo.png"} alt="Logo" width={200} height={32} />
-                <Image className="dark:hidden" src={"/images/logo/logo.png"} alt="Logo" width={200} height={32} />
-              </Link>
-              <p className="mb-3 text-xl font-medium text-dark dark:text-white">
-                Sign in to your account
-              </p>
-
-              <h1 className="mb-4 text-2xl font-bold text-dark dark:text-white sm:text-heading-3">
-                Welcome Back!
-              </h1>
-
-              <p className="w-full max-w-[375px] font-medium text-dark-4 dark:text-dark-6">
-                Please sign in to your account by completing the necessary
-                fields below
-              </p>
-
-              <div className="mt-31">
-                <Image src={"/images/grids/grid-02.svg"} alt="Logo" width={405} height={325} className="mx-auto dark:opacity-30" />
-              </div>
-            </div>
-          </div>
+          
+          <p className="text-sm text-gray-700 mt-1">Admin Dashboard</p>
         </div>
+
+        {/* Card */}
+        <div className="bg-white dark:bg-boxdark rounded-2xl shadow-sm border border-gray-100 dark:border-strokedark p-8">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-white text-center mb-1">Sign in</h2>
+          <p className="text-sm text-gray-400 mb-6 text-center">Enter your credentials to continue</p>
+          <Signin />
+        </div>
+
+        <p className="text-center text-xs text-gray-700 mt-6">
+          © {new Date().getFullYear()} Kripa Financial Solutions
+        </p>
+
       </div>
     </div>
-    // </DefaultLayout>
   );
 };
+
 export default SignIn;
