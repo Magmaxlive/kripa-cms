@@ -13,8 +13,10 @@ import { GoPackage } from "react-icons/go";
 import { IoMdBook } from "react-icons/io";
 import { LuLayoutPanelTop } from "react-icons/lu";
 import { PiBagSimpleBold } from "react-icons/pi";
-import { FaRegQuestionCircle } from "react-icons/fa";
+import { FaRegQuestionCircle,FaWpforms  } from "react-icons/fa";
 import { LuPaintbrushVertical } from "react-icons/lu";
+import { RiContactsLine } from "react-icons/ri";
+
 
 
 
@@ -44,7 +46,7 @@ const menuGroups = [
       },
       
       {
-        icon: (<MdOutlineSpaceDashboard size="25" />),
+        icon: (<RiContactsLine size="25" />),
         label: "Contacts",
         route: "/dashboard/contact-page",
       },
@@ -128,14 +130,20 @@ const menuGroups = [
     name: "FORM SUBMISSIONS",
     menuItems: [
       {
-        icon: (<LuLayoutPanelTop size="25" />),
-        label: "Career Form",
-        route: "/dashboard/messages",
+        icon: (<FaWpforms  size="25" />),
+        label: "Job Applications",
+        route: "/dashboard/job-applications",
       },
       {
-        icon: (<LuLayoutPanelTop size="25" />),
-        label: "Enquiry Form",
-        route: "/dashboard/messages",
+        icon: (<FaWpforms  size="25" />),
+        label: "Enquiries",
+        route: "/dashboard/enquiries",
+      },
+
+       {
+        icon: (<FaWpforms  size="25" />),
+        label: "Subscribers",
+        route: "/dashboard/subscribers",
       },
     ]
   },
