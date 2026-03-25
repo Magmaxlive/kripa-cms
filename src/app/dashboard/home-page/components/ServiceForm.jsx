@@ -7,6 +7,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+
 // ---------- API FUNCTIONS ----------
 const fetchServiceSection = () =>
   axios.get(`${baseURL}/service-section/`).then((res) => res.data);
@@ -35,7 +36,6 @@ const updateCategory = (formData) => {
 const deleteCategory = (id) =>
   axios.delete(`${baseURL}/service-categories/${id}/`);
 
-// ---------- FAQ API FUNCTIONS ----------
 const fetchFaqs = (categoryId) =>
   axios.get(`${baseURL}/category-faq/`, { params: { category: categoryId } }).then((res) => res.data);
 
@@ -94,16 +94,18 @@ const TextareaField = ({ label, id, value, onChange, placeholder, rows = 3, erro
   </div>
 );
 
-const RichTextField = ({ label, value, onChange, editorKey, error, required }) => (
+const RichTextField = ({ label, value, onChange, editorKey, error, required, minHeight = "320px" }) => (
   <div className="flex flex-col gap-1.5">
     <label className="text-sm font-medium">
       {label}{required && <span className="text-red-500 ml-1">*</span>}
     </label>
     <div className={`border rounded-md overflow-visible dark:border-strokedark
-      [&_.ck-editor__editable]:min-h-[320px] [&_.ck-editor__editable]:text-sm [&_.ck-editor__editable]:px-4
+      [&_.ck-editor__editable]:text-sm [&_.ck-editor__editable]:px-4
       [&_.ck-editor__editable]:dark:bg-meta-4 [&_.ck-toolbar]:dark:bg-boxdark [&_.ck-toolbar]:dark:border-strokedark
       [&_.ck-toolbar]:sticky [&_.ck-toolbar]:top-0 [&_.ck-toolbar]:z-10
-      ${error ? "border-red-400" : "border-gray-300"}`}>
+      ${error ? "border-red-400" : "border-gray-300"}`}
+      style={{ "--min-h": minHeight }}
+    >
       <CKEditor
         key={editorKey}
         editor={ClassicEditor}
@@ -134,7 +136,6 @@ const DisplayField = ({ label, value }) => (
   </div>
 );
 
-// ---------- IMAGE UPLOAD FIELD ----------
 const MAX_IMAGE_SIZE = 1 * 1024 * 1024;
 
 const ImageUploadField = ({ label, fieldName, existingUrl, file, onFileChange, onRemove, fileInputRef, required, error }) => (
@@ -161,7 +162,6 @@ const ImageUploadField = ({ label, fieldName, existingUrl, file, onFileChange, o
 // ---------- SERVICE SECTION MODAL ----------
 const ServiceSectionModal = ({ isOpen, onClose, data }) => {
   const queryClient = useQueryClient();
-
   const [form, setForm] = useState(() => ({
     minor_heading: data?.minor_heading || "",
     main_heading:  data?.main_heading  || "",
@@ -170,58 +170,36 @@ const ServiceSectionModal = ({ isOpen, onClose, data }) => {
   const [errors, setErrors] = useState({});
 
   React.useEffect(() => {
-    setForm({
-      minor_heading: data?.minor_heading || "",
-      main_heading:  data?.main_heading  || "",
-      paragraph:     data?.paragraph     || "",
-    });
+    setForm({ minor_heading: data?.minor_heading || "", main_heading: data?.main_heading || "", paragraph: data?.paragraph || "" });
     setErrors({});
   }, [data]);
 
   const mutation = useMutation({
     mutationFn: saveServiceSection,
-    onSuccess: () => {
-      queryClient.invalidateQueries(["service-section"]);
-      toast.success("Service section updated successfully!");
-      onClose();
-    },
+    onSuccess: () => { queryClient.invalidateQueries(["service-section"]); toast.success("Service section updated successfully!"); onClose(); },
     onError: () => toast.error("Failed to update service section."),
   });
 
-  const validate = () => {
+  const set = (key) => (ev) => { setForm((f) => ({ ...f, [key]: ev.target.value })); setErrors((e) => ({ ...e, [key]: "" })); };
+
+  const handleSubmit = () => {
     const e = {};
     if (!form.minor_heading.trim()) e.minor_heading = "Minor heading is required.";
     if (!form.main_heading.trim())  e.main_heading  = "Main heading is required.";
     if (!form.paragraph.trim())     e.paragraph     = "Paragraph is required.";
-    return e;
-  };
-
-  const handleSubmit = () => {
-    const e = validate();
     if (Object.keys(e).length) { setErrors(e); return; }
     setErrors({});
     mutation.mutate({ id: data?.id, ...form });
-  };
-
-  const set = (key) => (ev) => {
-    setForm((f) => ({ ...f, [key]: ev.target.value }));
-    setErrors((e) => ({ ...e, [key]: "" }));
   };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Edit Service Section">
       <div className="flex flex-col gap-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Field label="Minor Heading" id="minor_heading" required
-            value={form.minor_heading} error={errors.minor_heading}
-            onChange={set("minor_heading")} placeholder="Our Products" />
-          <Field label="Main Heading" id="main_heading" required
-            value={form.main_heading} error={errors.main_heading}
-            onChange={set("main_heading")} placeholder="Engineered for Harsh Environments" />
+          <Field label="Minor Heading" id="minor_heading" required value={form.minor_heading} error={errors.minor_heading} onChange={set("minor_heading")} placeholder="Our Products" />
+          <Field label="Main Heading"  id="main_heading"  required value={form.main_heading}  error={errors.main_heading}  onChange={set("main_heading")}  placeholder="Engineered for Harsh Environments" />
         </div>
-        <TextareaField label="Paragraph" id="paragraph" required
-          value={form.paragraph} error={errors.paragraph}
-          onChange={set("paragraph")} placeholder="Describe the service section..." rows={4} />
+        <TextareaField label="Paragraph" id="paragraph" required value={form.paragraph} error={errors.paragraph} onChange={set("paragraph")} placeholder="Describe the service section..." rows={4} />
       </div>
       <ModalActions onClose={onClose} onSubmit={handleSubmit} submitting={mutation.isPending} isEdit={true} />
     </Modal>
@@ -229,14 +207,11 @@ const ServiceSectionModal = ({ isOpen, onClose, data }) => {
 };
 
 // ---------- CATEGORY MODAL ----------
-const EMPTY_CATEGORY_FORM = {
-  title: "", short_description: "", minor_heading: "", main_heading: "", brief_description: "",
-};
+const EMPTY_CATEGORY_FORM = { title: "", short_description: "", minor_heading: "", main_heading: "", brief_description: "" };
 
 const formFromData = (data) =>
-  data
-    ? { title: data.title || "", short_description: data.short_description || "", minor_heading: data.minor_heading || "", main_heading: data.main_heading || "", brief_description: data.brief_description || "" }
-    : EMPTY_CATEGORY_FORM;
+  data ? { title: data.title || "", short_description: data.short_description || "", minor_heading: data.minor_heading || "", main_heading: data.main_heading || "", brief_description: data.brief_description || "" }
+       : EMPTY_CATEGORY_FORM;
 
 const CategoryModal = ({ isOpen, onClose, data }) => {
   const queryClient = useQueryClient();
@@ -247,30 +222,15 @@ const CategoryModal = ({ isOpen, onClose, data }) => {
   const coverRef  = React.useRef(null);
   const bannerRef = React.useRef(null);
 
-  React.useEffect(() => {
-    setForm(formFromData(data));
-    setFiles({ cover_image: null, banner_image: null });
-    setErrors({});
-  }, [data]);
+  React.useEffect(() => { setForm(formFromData(data)); setFiles({ cover_image: null, banner_image: null }); setErrors({}); }, [data]);
 
-  const set = (key) => (ev) => {
-    setForm((f) => ({ ...f, [key]: ev.target.value }));
-    setErrors((e) => ({ ...e, [key]: "" }));
-  };
+  const set = (key) => (ev) => { setForm((f) => ({ ...f, [key]: ev.target.value })); setErrors((e) => ({ ...e, [key]: "" })); };
 
   const handleFileChange = (e, fieldName) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      setErrors((ev) => ({ ...ev, [fieldName]: "Only image files are allowed." }));
-      e.target.value = ""; return;
-    }
-    if (file.size > MAX_IMAGE_SIZE) {
-      setErrors((ev) => ({ ...ev, [fieldName]: "Image must be 1 MB or smaller." }));
-      e.target.value = ""; return;
-    }
-    setFiles((prev) => ({ ...prev, [fieldName]: file }));
-    setErrors((ev) => ({ ...ev, [fieldName]: "" }));
+    const file = e.target.files[0]; if (!file) return;
+    if (!file.type.startsWith("image/")) { setErrors((ev) => ({ ...ev, [fieldName]: "Only image files are allowed." })); e.target.value = ""; return; }
+    if (file.size > MAX_IMAGE_SIZE) { setErrors((ev) => ({ ...ev, [fieldName]: "Image must be 1 MB or smaller." })); e.target.value = ""; return; }
+    setFiles((prev) => ({ ...prev, [fieldName]: file })); setErrors((ev) => ({ ...ev, [fieldName]: "" }));
   };
 
   const handleRemove = (fieldName) => {
@@ -281,15 +241,11 @@ const CategoryModal = ({ isOpen, onClose, data }) => {
 
   const mutation = useMutation({
     mutationFn: isEdit ? updateCategory : createCategory,
-    onSuccess: () => {
-      queryClient.invalidateQueries(["service-categories"]);
-      toast.success(`Category ${isEdit ? "updated" : "created"} successfully!`);
-      onClose();
-    },
+    onSuccess: () => { queryClient.invalidateQueries(["service-categories"]); toast.success(`Category ${isEdit ? "updated" : "created"} successfully!`); onClose(); },
     onError: () => toast.error(`Failed to ${isEdit ? "update" : "create"} category.`),
   });
 
-  const validate = () => {
+  const handleSubmit = () => {
     const e = {};
     if (!form.title.trim())             e.title             = "Title is required.";
     if (!form.short_description.trim()) e.short_description = "Short description is required.";
@@ -297,11 +253,6 @@ const CategoryModal = ({ isOpen, onClose, data }) => {
     if (!form.minor_heading.trim())     e.minor_heading     = "Minor heading is required.";
     if (!form.main_heading.trim())      e.main_heading      = "Main heading is required.";
     if (!form.brief_description.replace(/<[^>]*>/g, "").trim()) e.brief_description = "Brief description is required.";
-    return e;
-  };
-
-  const handleSubmit = () => {
-    const e = validate();
     if (Object.keys(e).length) { setErrors(e); return; }
     setErrors({});
     const fd = new FormData();
@@ -316,63 +267,37 @@ const CategoryModal = ({ isOpen, onClose, data }) => {
     <Modal isOpen={isOpen} onClose={onClose} title={isEdit ? "Edit Category" : "Add Category"}>
       <div className="flex flex-col gap-4">
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Card / Listing</p>
-        <div className="grid grid-cols-1 gap-4">
-          <Field label="Title" id="title" required value={form.title} error={errors.title} onChange={set("title")} />
-          <Field label="Short Description" id="short_description" required
-            value={form.short_description} error={errors.short_description} onChange={set("short_description")} />
-        </div>
-        <ImageUploadField
-          label="Cover Image" fieldName="cover_image" required={!isEdit}
-          existingUrl={data?.cover_image} file={files.cover_image} error={errors.cover_image}
-          onFileChange={handleFileChange} onRemove={handleRemove} fileInputRef={coverRef}
-        />
-
+        <Field label="Title" id="title" required value={form.title} error={errors.title} onChange={set("title")} />
+        <Field label="Short Description" id="short_description" required value={form.short_description} error={errors.short_description} onChange={set("short_description")} />
+        <ImageUploadField label="Cover Image" fieldName="cover_image" required={!isEdit} existingUrl={data?.cover_image} file={files.cover_image} error={errors.cover_image} onFileChange={handleFileChange} onRemove={handleRemove} fileInputRef={coverRef} />
         <hr className="border-gray-200 dark:border-strokedark" />
-
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Detail Page</p>
-        <div className="grid grid-cols-1 gap-4">
-          <Field label="Minor Heading" id="minor_heading" required
-            value={form.minor_heading} error={errors.minor_heading} onChange={set("minor_heading")} />
-          <Field label="Main Heading" id="main_heading" required
-            value={form.main_heading} error={errors.main_heading} onChange={set("main_heading")} />
-        </div>
+        <Field label="Minor Heading" id="minor_heading" required value={form.minor_heading} error={errors.minor_heading} onChange={set("minor_heading")} />
+        <Field label="Main Heading"  id="main_heading"  required value={form.main_heading}  error={errors.main_heading}  onChange={set("main_heading")} />
         <RichTextField
           label="Brief Description" required
-          value={form.brief_description}
-          error={errors.brief_description}
-          onChange={(val) => {
-            setForm((f) => ({ ...f, brief_description: val }));
-            setErrors((e) => ({ ...e, brief_description: "" }));
-          }}
-          editorKey={`${data?.id ?? "new"}-${isOpen}`}
+          value={form.brief_description} error={errors.brief_description}
+          editorKey={`cat-${data?.id ?? "new"}-${isOpen}`}
+          onChange={(val) => { setForm((f) => ({ ...f, brief_description: val })); setErrors((e) => ({ ...e, brief_description: "" })); }}
         />
-        <ImageUploadField
-          label="Banner Image" fieldName="banner_image"
-          existingUrl={data?.banner_image} file={files.banner_image} error={errors.banner_image}
-          onFileChange={handleFileChange} onRemove={handleRemove} fileInputRef={bannerRef}
-        />
+        <ImageUploadField label="Banner Image" fieldName="banner_image" existingUrl={data?.banner_image} file={files.banner_image} error={errors.banner_image} onFileChange={handleFileChange} onRemove={handleRemove} fileInputRef={bannerRef} />
       </div>
       <ModalActions onClose={onClose} onSubmit={handleSubmit} submitting={mutation.isPending} isEdit={isEdit} />
     </Modal>
   );
 };
 
-// ---------- FAQ FORM ROW (inline add / edit) ----------
+// ---------- FAQ FORM ROW ----------
 const EMPTY_FAQ = { question: "", answer: "" };
 
-const FaqFormRow = ({ initial = EMPTY_FAQ, onSave, onCancel, saving }) => {
+const FaqFormRow = ({ initial = EMPTY_FAQ, onSave, onCancel, saving, editorKey }) => {
   const [form, setForm]     = useState(initial);
   const [errors, setErrors] = useState({});
 
-  const set = (key) => (ev) => {
-    setForm((f) => ({ ...f, [key]: ev.target.value }));
-    setErrors((e) => ({ ...e, [key]: "" }));
-  };
-
   const handleSave = () => {
     const e = {};
-    if (!form.question.trim()) e.question = "Question is required.";
-    if (!form.answer.trim())   e.answer   = "Answer is required.";
+    if (!form.question.trim())                       e.question = "Question is required.";
+    if (!form.answer.replace(/<[^>]*>/g, "").trim()) e.answer   = "Answer is required.";
     if (Object.keys(e).length) { setErrors(e); return; }
     onSave(form);
   };
@@ -381,10 +306,15 @@ const FaqFormRow = ({ initial = EMPTY_FAQ, onSave, onCancel, saving }) => {
     <div className="flex flex-col gap-3 p-4 rounded-lg border border-primary/30 bg-primary/5 dark:bg-primary/10">
       <Field label="Question" id="faq-question" required
         value={form.question} error={errors.question}
-        onChange={set("question")} placeholder="e.g. What services do you offer?" />
-      <TextareaField label="Answer" id="faq-answer" required
+        onChange={(e) => { setForm((f) => ({ ...f, question: e.target.value })); setErrors((ev) => ({ ...ev, question: "" })); }}
+        placeholder="e.g. What services do you offer?" />
+      <RichTextField
+        label="Answer" required
         value={form.answer} error={errors.answer}
-        onChange={set("answer")} placeholder="Write the answer here..." rows={3} />
+        editorKey={editorKey || `faq-${initial.question?.slice(0,10) || "new"}`}
+        onChange={(val) => { setForm((f) => ({ ...f, answer: val })); setErrors((ev) => ({ ...ev, answer: "" })); }}
+        minHeight="150px"
+      />
       <div className="flex justify-end gap-2 mt-1">
         <button onClick={onCancel} className="px-3 py-1.5 text-sm rounded border border-gray-300 text-gray-600 hover:bg-gray-100 transition">Cancel</button>
         <button onClick={handleSave} disabled={saving}
@@ -396,7 +326,7 @@ const FaqFormRow = ({ initial = EMPTY_FAQ, onSave, onCancel, saving }) => {
   );
 };
 
-// ---------- FAQ ITEM (read mode) ----------
+// ---------- FAQ ITEM ----------
 const FaqItem = ({ faq, onEdit, onDelete, deleting }) => {
   const [open, setOpen] = useState(false);
   return (
@@ -405,17 +335,16 @@ const FaqItem = ({ faq, onEdit, onDelete, deleting }) => {
         onClick={() => setOpen((v) => !v)}>
         <span className="text-sm font-medium text-gray-800 dark:text-white flex-1 pr-4">{faq.question}</span>
         <div className="flex items-center gap-2 shrink-0">
-          <button onClick={(e) => { e.stopPropagation(); onEdit(); }}
-            className="text-blue-500 hover:text-blue-700 p-1 rounded transition" title="Edit"><FiEdit size={14} /></button>
-          <button onClick={(e) => { e.stopPropagation(); onDelete(); }}
-            className="text-red-500 hover:text-red-700 p-1 rounded transition" title="Delete" disabled={deleting}><FiTrash size={14} /></button>
+          <button onClick={(e) => { e.stopPropagation(); onEdit(); }} className="text-blue-500 hover:text-blue-700 p-1 rounded transition" title="Edit"><FiEdit size={14} /></button>
+          <button onClick={(e) => { e.stopPropagation(); onDelete(); }} className="text-red-500 hover:text-red-700 p-1 rounded transition" title="Delete" disabled={deleting}><FiTrash size={14} /></button>
           {open ? <FiChevronUp size={16} className="text-gray-400" /> : <FiChevronDown size={16} className="text-gray-400" />}
         </div>
       </div>
       {open && (
-        <div className="px-4 pb-4 pt-1 text-sm text-gray-600 dark:text-gray-400 border-t border-gray-100 dark:border-strokedark">
-          {faq.answer}
-        </div>
+        <div
+          className="ck-content px-4 pb-4 pt-1 text-sm text-gray-600 dark:text-gray-400 border-t border-gray-100 dark:border-strokedark"
+          dangerouslySetInnerHTML={{ __html: faq.answer }}
+        />
       )}
     </div>
   );
@@ -428,9 +357,7 @@ const FaqModal = ({ isOpen, onClose, category }) => {
   const [editingId, setEditingId] = useState(null);
   const [addingNew, setAddingNew] = useState(false);
 
-  React.useEffect(() => {
-    if (isOpen) { setEditingId(null); setAddingNew(false); }
-  }, [isOpen, categoryId]);
+  React.useEffect(() => { if (isOpen) { setEditingId(null); setAddingNew(false); } }, [isOpen, categoryId]);
 
   const { data: faqs = [], isLoading } = useQuery({
     queryKey: ["service-faqs", categoryId],
@@ -440,21 +367,9 @@ const FaqModal = ({ isOpen, onClose, category }) => {
 
   const invalidate = () => queryClient.invalidateQueries(["service-faqs", categoryId]);
 
-  const createMutation = useMutation({
-    mutationFn: createFaq,
-    onSuccess: () => { invalidate(); toast.success("FAQ added successfully!"); setAddingNew(false); },
-    onError: () => toast.error("Failed to add FAQ."),
-  });
-  const updateMutation = useMutation({
-    mutationFn: updateFaq,
-    onSuccess: () => { invalidate(); toast.success("FAQ updated successfully!"); setEditingId(null); },
-    onError: () => toast.error("Failed to update FAQ."),
-  });
-  const deleteMutation = useMutation({
-    mutationFn: deleteFaq,
-    onSuccess: () => { invalidate(); toast.success("FAQ deleted successfully!"); },
-    onError: () => toast.error("Failed to delete FAQ."),
-  });
+  const createMutation = useMutation({ mutationFn: createFaq, onSuccess: () => { invalidate(); toast.success("FAQ added!"); setAddingNew(false); }, onError: () => toast.error("Failed to add FAQ.") });
+  const updateMutation = useMutation({ mutationFn: updateFaq, onSuccess: () => { invalidate(); toast.success("FAQ updated!"); setEditingId(null); }, onError: () => toast.error("Failed to update FAQ.") });
+  const deleteMutation = useMutation({ mutationFn: deleteFaq, onSuccess: () => { invalidate(); toast.success("FAQ deleted!"); }, onError: () => toast.error("Failed to delete FAQ.") });
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} maxWidth="max-w-2xl"
@@ -468,6 +383,7 @@ const FaqModal = ({ isOpen, onClose, category }) => {
         )}
         {addingNew && (
           <FaqFormRow
+            editorKey={`faq-new-${Date.now()}`}
             onSave={(form) => createMutation.mutate({ categoryId, ...form })}
             onCancel={() => setAddingNew(false)}
             saving={createMutation.isPending}
@@ -482,6 +398,7 @@ const FaqModal = ({ isOpen, onClose, category }) => {
             {faqs.map((faq) =>
               editingId === faq.id ? (
                 <FaqFormRow key={faq.id}
+                  editorKey={`faq-edit-${faq.id}`}
                   initial={{ question: faq.question, answer: faq.answer }}
                   onSave={(form) => updateMutation.mutate({ id: faq.id, ...form })}
                   onCancel={() => setEditingId(null)}
@@ -514,16 +431,10 @@ const ServiceSectionForm = () => {
   const [faqModalOpen,      setFaqModalOpen]      = useState(false);
   const [faqCategory,       setFaqCategory]       = useState(null);
 
-  const { data: sectionResponse, isLoading: loadingSection } = useQuery({
-    queryKey: ["service-section"],
-    queryFn:  fetchServiceSection,
-  });
+  const { data: sectionResponse, isLoading: loadingSection } = useQuery({ queryKey: ["service-section"], queryFn: fetchServiceSection });
   const sectionData = Array.isArray(sectionResponse) ? sectionResponse[0] || null : sectionResponse || null;
 
-  const { data: categories = [], isLoading: loadingCategories } = useQuery({
-    queryKey: ["service-categories"],
-    queryFn:  fetchCategories,
-  });
+  const { data: categories = [], isLoading: loadingCategories } = useQuery({ queryKey: ["service-categories"], queryFn: fetchCategories });
 
   const deleteMutation = useMutation({
     mutationFn: deleteCategory,
@@ -552,19 +463,14 @@ const ServiceSectionForm = () => {
       />
 
       <div className="flex flex-col gap-8">
-
-        {/* ── Service Section header card ── */}
         <div className="bg-white dark:bg-boxdark rounded-lg shadow-sm p-6 border border-stroke dark:border-strokedark">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">Service Section</h2>
-            <button onClick={() => setSectionModalOpen(true)}
-              className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded hover:bg-opacity-90 transition">
+            <button onClick={() => setSectionModalOpen(true)} className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded hover:bg-opacity-90 transition">
               <FiEdit /> Edit
             </button>
           </div>
-          {loadingSection ? (
-            <p className="text-gray-400 text-sm">Loading...</p>
-          ) : (
+          {loadingSection ? <p className="text-gray-400 text-sm">Loading...</p> : (
             <div className="flex flex-col gap-4">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <DisplayField label="Minor Heading" value={sectionData?.minor_heading} />
@@ -575,57 +481,44 @@ const ServiceSectionForm = () => {
           )}
         </div>
 
-        {/* ── Service Categories image card grid ── */}
         <div className="bg-white dark:bg-boxdark rounded-lg shadow-sm p-6 border border-stroke dark:border-strokedark">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold">Service Categories</h2>
-            <button onClick={handleAddCategory}
-              className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded hover:bg-opacity-90 transition">
+            <button onClick={handleAddCategory} className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded hover:bg-opacity-90 transition">
               <FiPlus /> Add
             </button>
           </div>
-
-          {loadingCategories ? (
-            <p className="text-gray-400 text-sm">Loading...</p>
-          ) : categories.length === 0 ? (
-            <p className="text-gray-400 text-sm">No categories added yet.</p>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {categories.map((item) => (
-                <div key={item.id}
-                  className="group relative rounded-xl overflow-hidden border border-gray-200 dark:border-strokedark shadow-sm hover:shadow-md transition-shadow bg-white dark:bg-meta-4">
-                  <div className="relative h-44 w-full bg-gray-100 dark:bg-gray-800">
-                    {item.cover_image ? (
-                      <img src={item.cover_image} alt={item.title} className="h-full w-full object-cover" />
-                    ) : (
-                      <div className="h-full w-full flex items-center justify-center text-gray-300 text-xs">No image</div>
-                    )}
-                    <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button onClick={() => handleEditCategory(item)}
-                        className="bg-white text-blue-500 hover:text-blue-700 p-1.5 rounded-full shadow" title="Edit">
-                        <FiEdit size={14} />
-                      </button>
-                      <button onClick={() => handleDeleteCategory(item.id)}
-                        className="bg-white text-red-500 hover:text-red-700 p-1.5 rounded-full shadow" title="Delete"
-                        disabled={deleteMutation.isPending}>
-                        <FiTrash size={14} />
+          {loadingCategories ? <p className="text-gray-400 text-sm">Loading...</p>
+            : categories.length === 0 ? <p className="text-gray-400 text-sm">No categories added yet.</p>
+            : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {categories.map((item) => (
+                  <div key={item.id}
+                    className="group relative rounded-xl overflow-hidden border border-gray-200 dark:border-strokedark shadow-sm hover:shadow-md transition-shadow bg-white dark:bg-meta-4">
+                    <div className="relative h-44 w-full bg-gray-100 dark:bg-gray-800">
+                      {item.cover_image ? (
+                        <img src={item.cover_image} alt={item.title} className="h-full w-full object-cover" />
+                      ) : (
+                        <div className="h-full w-full flex items-center justify-center text-gray-300 text-xs">No image</div>
+                      )}
+                      <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onClick={() => handleEditCategory(item)} className="bg-white text-blue-500 hover:text-blue-700 p-1.5 rounded-full shadow" title="Edit"><FiEdit size={14} /></button>
+                        <button onClick={() => handleDeleteCategory(item.id)} className="bg-white text-red-500 hover:text-red-700 p-1.5 rounded-full shadow" title="Delete" disabled={deleteMutation.isPending}><FiTrash size={14} /></button>
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-sm text-gray-800 dark:text-white truncate capitalize">{item.title || "—"}</h3>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">{item.short_description || "—"}</p>
+                      <button onClick={() => handleManageFaqs(item)}
+                        className="mt-3 w-full flex items-center justify-center gap-1.5 text-xs font-medium text-primary border border-primary/30 hover:bg-primary/5 py-1.5 rounded-md transition">
+                        <FiHelpCircle size={13} /> Manage FAQs
                       </button>
                     </div>
                   </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold text-sm text-gray-800 dark:text-white truncate capitalize">{item.title || "—"}</h3>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">{item.short_description || "—"}</p>
-                    <button onClick={() => handleManageFaqs(item)}
-                      className="mt-3 w-full flex items-center justify-center gap-1.5 text-xs font-medium text-primary border border-primary/30 hover:bg-primary/5 py-1.5 rounded-md transition">
-                      <FiHelpCircle size={13} /> Manage FAQs
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
         </div>
-
       </div>
     </>
   );

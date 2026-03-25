@@ -25,7 +25,7 @@ const deleteService = (id) => axios.delete(`${baseURL}/services/${id}/`);
 const fetchServiceFaqs = (serviceId) => axios.get(`${baseURL}/service-faq/`, { params: { service: serviceId } }).then(r => r.data);
 const createServiceFaq = ({ serviceId, question, answer }) => axios.post(`${baseURL}/service-faq/`, { service: serviceId, question, answer });
 const updateServiceFaq = ({ id, question, answer }) => axios.patch(`${baseURL}/service-faq/${id}/`, { question, answer });
-const deleteServiceFaq = (id) => axios.delete(`${baseURL}/service-faq/${id}/`,);
+const deleteServiceFaq = (id) => axios.delete(`${baseURL}/service-faq/${id}/`);
 
 // ---------- CONSTANTS ----------
 const MAX_IMAGE_SIZE = 1 * 1024 * 1024;
@@ -95,15 +95,17 @@ const SelectField = ({ label, id, value, onChange, options, error, required, pla
   </div>
 );
 
-const RichTextField = ({ label, value, onChange, editorKey, error, required }) => (
+const RichTextField = ({ label, value, onChange, editorKey, error, required, minHeight = "320px" }) => (
   <div className="flex flex-col gap-1.5">
     <label className="text-sm font-medium">
       {label}{required && <span className="text-red-500 ml-1">*</span>}
     </label>
     <div className={`border rounded-md overflow-hidden dark:border-strokedark
-      [&_.ck-editor__editable]:min-h-[320px] [&_.ck-editor__editable]:text-sm [&_.ck-editor__editable]:px-4
+      [&_.ck-editor__editable]:text-sm [&_.ck-editor__editable]:px-4
       [&_.ck-editor__editable]:dark:bg-meta-4 [&_.ck-toolbar]:dark:bg-boxdark [&_.ck-toolbar]:dark:border-strokedark
-      ${error ? "border-red-400" : "border-gray-300"}`}>
+      ${error ? "border-red-400" : "border-gray-300"}`}
+      style={{ ["--ck-min-height"]: minHeight }}
+    >
       <CKEditor
         key={editorKey} editor={ClassicEditor} data={value}
         onChange={(_event, editor) => onChange(editor.getData())}
@@ -254,57 +256,24 @@ const ServiceModal = ({ isOpen, onClose, data, categories }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={isEdit ? "Edit Service" : "Add Service"}>
       <div className="flex flex-col gap-4">
-
-        {/* ── Card / Listing ── */}
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Card / Listing</p>
-
-        <SelectField
-          label="Category" id="category" value={form.category}
-          onChange={set("category")} options={categoryOptions}
-          error={errors.category}
-        />
-
+        <SelectField label="Category" id="category" value={form.category} onChange={set("category")} options={categoryOptions} error={errors.category} />
         <Field label="Title" id="title" required value={form.title} error={errors.title} onChange={set("title")} />
-
-        <TextareaField label="Short Description" id="short_description" required
-          value={form.short_description} error={errors.short_description}
-          onChange={set("short_description")} rows={3} />
-
-        <ImageUploadField
-          label="Cover Image" fieldName="cover_image" required={!isEdit}
-          existingUrl={data?.cover_image} file={files.cover_image} error={errors.cover_image}
-          onFileChange={handleFileChange} onRemove={handleRemove} fileInputRef={coverRef}
-        />
-
+        <TextareaField label="Short Description" id="short_description" required value={form.short_description} error={errors.short_description} onChange={set("short_description")} rows={3} />
+        <ImageUploadField label="Cover Image" fieldName="cover_image" required={!isEdit} existingUrl={data?.cover_image} file={files.cover_image} error={errors.cover_image} onFileChange={handleFileChange} onRemove={handleRemove} fileInputRef={coverRef} />
         <hr className="border-gray-200 dark:border-strokedark" />
-
-        {/* ── Detail Page ── */}
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Detail Page</p>
-
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Field label="Minor Heading" id="minor_heading" required
-            value={form.minor_heading} error={errors.minor_heading} onChange={set("minor_heading")} />
-          <Field label="Main Heading" id="main_heading" required
-            value={form.main_heading} error={errors.main_heading} onChange={set("main_heading")} />
+          <Field label="Minor Heading" id="minor_heading" required value={form.minor_heading} error={errors.minor_heading} onChange={set("minor_heading")} />
+          <Field label="Main Heading" id="main_heading" required value={form.main_heading} error={errors.main_heading} onChange={set("main_heading")} />
         </div>
-
         <RichTextField
           label="Brief Description" required
-          value={form.brief_description}
-          error={errors.brief_description}
-          onChange={(val) => {
-            setForm((f) => ({ ...f, brief_description: val }));
-            setErrors((e) => ({ ...e, brief_description: "" }));
-          }}
-          editorKey={`${data?.id ?? "new"}-${isOpen}`}
+          value={form.brief_description} error={errors.brief_description}
+          onChange={(val) => { setForm((f) => ({ ...f, brief_description: val })); setErrors((e) => ({ ...e, brief_description: "" })); }}
+          editorKey={`svc-${data?.id ?? "new"}-${isOpen}`}
         />
-
-        <ImageUploadField
-          label="Banner Image" fieldName="banner_image"
-          existingUrl={data?.banner_image} file={files.banner_image} error={errors.banner_image}
-          onFileChange={handleFileChange} onRemove={handleRemove} fileInputRef={bannerRef}
-        />
-
+        <ImageUploadField label="Banner Image" fieldName="banner_image" existingUrl={data?.banner_image} file={files.banner_image} error={errors.banner_image} onFileChange={handleFileChange} onRemove={handleRemove} fileInputRef={bannerRef} />
       </div>
       <ModalActions onClose={onClose} onSubmit={handleSubmit} submitting={mutation.isPending} isEdit={isEdit} />
     </Modal>
@@ -312,35 +281,38 @@ const ServiceModal = ({ isOpen, onClose, data, categories }) => {
 };
 
 // ════════════════════════════════════════════════════
-// FAQ FORM ROW (inline add / edit)
+// FAQ FORM ROW
 // ════════════════════════════════════════════════════
 const EMPTY_FAQ = { question: "", answer: "" };
 
-const FaqFormRow = ({ initial = EMPTY_FAQ, onSave, onCancel, saving }) => {
+const FaqFormRow = ({ initial = EMPTY_FAQ, onSave, onCancel, saving, editorKey }) => {
   const [form, setForm]     = useState(initial);
   const [errors, setErrors] = useState({});
 
-  const set = (key) => (ev) => {
-    setForm((f) => ({ ...f, [key]: ev.target.value }));
-    setErrors((e) => ({ ...e, [key]: "" }));
-  };
-
   const handleSave = () => {
     const e = {};
-    if (!form.question.trim()) e.question = "Question is required.";
-    if (!form.answer.trim())   e.answer   = "Answer is required.";
+    if (!form.question.trim())                         e.question = "Question is required.";
+    if (!form.answer.replace(/<[^>]*>/g, "").trim())   e.answer   = "Answer is required.";
     if (Object.keys(e).length) { setErrors(e); return; }
     onSave(form);
   };
 
   return (
     <div className="flex flex-col gap-3 p-4 rounded-lg border border-primary/30 bg-primary/5 dark:bg-primary/10">
-      <Field label="Question" id="faq-question" required
+      <Field
+        label="Question" id="faq-question" required
         value={form.question} error={errors.question}
-        onChange={set("question")} placeholder="e.g. What does this service include?" />
-      <TextareaField label="Answer" id="faq-answer" required
+        onChange={(e) => { setForm((f) => ({ ...f, question: e.target.value })); setErrors((ev) => ({ ...ev, question: "" })); }}
+        placeholder="e.g. What does this service include?"
+      />
+      {/* ← RichTextField for answer */}
+      <RichTextField
+        label="Answer" required
         value={form.answer} error={errors.answer}
-        onChange={set("answer")} placeholder="Write the answer here..." rows={3} />
+        editorKey={editorKey || `faq-${initial.question?.slice(0,10) || "new"}`}
+        onChange={(val) => { setForm((f) => ({ ...f, answer: val })); setErrors((ev) => ({ ...ev, answer: "" })); }}
+        minHeight="150px"
+      />
       <div className="flex justify-end gap-2 mt-1">
         <button onClick={onCancel} className="px-3 py-1.5 text-sm rounded border border-gray-300 text-gray-600 hover:bg-gray-100 transition">Cancel</button>
         <button onClick={handleSave} disabled={saving}
@@ -371,9 +343,11 @@ const FaqItem = ({ faq, onEdit, onDelete, deleting }) => {
         </div>
       </div>
       {open && (
-        <div className="px-4 pb-4 pt-1 text-sm text-gray-600 dark:text-gray-400 border-t border-gray-100 dark:border-strokedark">
-          {faq.answer}
-        </div>
+        // ← dangerouslySetInnerHTML to render rich text HTML
+        <div
+          className="ck-content px-4 pb-4 pt-1 text-sm text-gray-600 dark:text-gray-400 border-t border-gray-100 dark:border-strokedark"
+          dangerouslySetInnerHTML={{ __html: faq.answer }}
+        />
       )}
     </div>
   );
@@ -433,6 +407,7 @@ const FaqModal = ({ isOpen, onClose, service }) => {
         )}
         {addingNew && (
           <FaqFormRow
+            editorKey={`faq-new-${Date.now()}`}
             onSave={(form) => createMutation.mutate({ serviceId, ...form })}
             onCancel={() => setAddingNew(false)}
             saving={createMutation.isPending}
@@ -447,6 +422,7 @@ const FaqModal = ({ isOpen, onClose, service }) => {
             {faqs.map((faq) =>
               editingId === faq.id ? (
                 <FaqFormRow key={faq.id}
+                  editorKey={`faq-edit-${faq.id}`}
                   initial={{ question: faq.question, answer: faq.answer }}
                   onSave={(form) => updateMutation.mutate({ id: faq.id, ...form })}
                   onCancel={() => setEditingId(null)}
@@ -481,15 +457,8 @@ const ServicesForm = () => {
   const [faqService,       setFaqService]       = useState(null);
   const [activeFilter,     setActiveFilter]     = useState("all");
 
-  const { data: categories = [] } = useQuery({
-    queryKey: ["service-categories"],
-    queryFn:  fetchCategories,
-  });
-
-  const { data: services = [], isLoading } = useQuery({
-    queryKey: ["services"],
-    queryFn:  fetchServices,
-  });
+  const { data: categories = [] } = useQuery({ queryKey: ["service-categories"], queryFn: fetchCategories });
+  const { data: services = [], isLoading } = useQuery({ queryKey: ["services"], queryFn: fetchServices });
 
   const deleteMutation = useMutation({
     mutationFn: deleteService,
@@ -531,25 +500,20 @@ const ServicesForm = () => {
       <div className="bg-white dark:bg-boxdark rounded-lg shadow-sm p-6 border border-stroke dark:border-strokedark">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold">Services</h2>
-          <button onClick={handleAdd}
-            className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded hover:bg-opacity-90 transition">
+          <button onClick={handleAdd} className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded hover:bg-opacity-90 transition">
             <FiPlus /> Add Service
           </button>
         </div>
 
-        {/* ── Category filter tabs ── */}
         {categories.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-4">
             {[{ id: "all", title: "All" }, ...categories].map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setActiveFilter(String(cat.id))}
+              <button key={cat.id} onClick={() => setActiveFilter(String(cat.id))}
                 className={`px-3 py-1.5 rounded-full text-xs font-medium border transition
                   ${String(activeFilter) === String(cat.id)
                     ? "bg-primary text-white border-primary"
                     : "bg-white dark:bg-meta-4 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-strokedark hover:border-primary hover:text-primary"
-                  }`}
-              >
+                  }`}>
                 {cat.title}
               </button>
             ))}
@@ -571,22 +535,14 @@ const ServicesForm = () => {
                   ) : (
                     <div className="h-full w-full flex items-center justify-center text-gray-300 text-xs">No image</div>
                   )}
-                  {/* category badge */}
                   {item.category && (
                     <span className="absolute top-2 left-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded-full backdrop-blur-sm capitalize">
                       {categoryMap[item.category] || "—"}
                     </span>
                   )}
                   <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={() => handleEdit(item)}
-                      className="bg-white text-blue-500 hover:text-blue-700 p-1.5 rounded-full shadow" title="Edit">
-                      <FiEdit size={14} />
-                    </button>
-                    <button onClick={() => handleDelete(item.id)}
-                      className="bg-white text-red-500 hover:text-red-700 p-1.5 rounded-full shadow" title="Delete"
-                      disabled={deleteMutation.isPending}>
-                      <FiTrash size={14} />
-                    </button>
+                    <button onClick={() => handleEdit(item)} className="bg-white text-blue-500 hover:text-blue-700 p-1.5 rounded-full shadow" title="Edit"><FiEdit size={14} /></button>
+                    <button onClick={() => handleDelete(item.id)} className="bg-white text-red-500 hover:text-red-700 p-1.5 rounded-full shadow" title="Delete" disabled={deleteMutation.isPending}><FiTrash size={14} /></button>
                   </div>
                 </div>
                 <div className="p-4">
