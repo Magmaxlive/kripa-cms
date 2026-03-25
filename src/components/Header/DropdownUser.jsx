@@ -32,7 +32,7 @@ const UserLogout = async () => {
   } finally {
     // Clear frontend cookie
     document.cookie = "isLoggedIn=; path=/; max-age=0";
-    window.location.href = "/auth/signin";
+    window.location.replace("/auth/signin");
   }
 };
 
