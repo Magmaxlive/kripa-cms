@@ -23,7 +23,8 @@ export default function SigninWithPassword() {
       });
 
       if (res.ok) {
-        window.location.href = "/dashboard/home-page";
+        document.cookie = "isLoggedIn=true; path=/; max-age=604800; SameSite=Lax; Secure";
+        window.location.href = "/dashboard";
       } else {
         const data = await res.json();
         setError(data.error || "Invalid credentials Provided");

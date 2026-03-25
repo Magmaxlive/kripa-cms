@@ -20,19 +20,20 @@ const DropdownUser = () => {
   }
 
 
-  const UserLogout = async () => {
+// DropdownUser.jsx
+const UserLogout = async () => {
   try {
     await fetch(`${baseURL}/auth/logout/`, {
-      method:      "POST",
+      method: "POST",
       credentials: "include",
     });
   } catch (err) {
     console.error("Logout error:", err);
   } finally {
+    // Clear frontend cookie
+    document.cookie = "isLoggedIn=; path=/; max-age=0";
     window.location.href = "/auth/signin";
   }
-
- 
 };
 
  useEffect(()=>{
