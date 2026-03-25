@@ -1,21 +1,20 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
-import { baseURL, authToken } from "@/auth/auth";
+import { baseURL} from "@/auth/auth";
 import { FiEye, FiEdit, FiX, FiExternalLink, FiDownload } from "react-icons/fi";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
 // ---------- API ----------
-const authHeaders = { Authorization: `Bearer ${authToken}` };
 
 const fetchApplications = ({ page = 1, status = "", search = "" } = {}) => {
   const params = new URLSearchParams({ page });
   if (status) params.append("status", status);
   if (search) params.append("search", search);
-  return axios.get(`${baseURL}/job-applications/?${params}`, { headers: authHeaders }).then(r => r.data);
+  return axios.get(`${baseURL}/job-applications/?${params}`).then(r => r.data);
 };
-const updateStatus = ({ id, status }) => axios.patch(`${baseURL}/job-applications/${id}/`, { status }, { headers: authHeaders });
+const updateStatus = ({ id, status }) => axios.patch(`${baseURL}/job-applications/${id}/`, { status });
 
 // ---------- CONSTANTS ----------
 const STATUS_OPTIONS = [

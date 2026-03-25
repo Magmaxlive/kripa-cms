@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
-import { baseURL, authToken } from "@/auth/auth";
+import { baseURL } from "@/auth/auth";
 import { FiEdit, FiTrash, FiPlus, FiX } from "react-icons/fi";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
@@ -10,23 +10,22 @@ import DynamicIcon from "./DynamicIcon";
 // ─────────────────────────────────────────────
 // API
 // ─────────────────────────────────────────────
-const authHeaders = { Authorization: `Bearer ${authToken}` };
 
 const fetchSection  = () => axios.get(`${baseURL}/whychoose/`).then(r => r.data);
 const fetchPoints   = () => axios.get(`${baseURL}/whychoose-points/`).then(r => r.data);
 const fetchCards    = () => axios.get(`${baseURL}/whychoose-cards/`).then(r => r.data);
 const fetchCounters = () => axios.get(`${baseURL}/whychoose-counters/`).then(r => r.data);
 
-const saveSection   = ({ id, ...data }) => id ? axios.patch(`${baseURL}/whychoose/${id}/`, data, { headers: authHeaders }) : axios.post(`${baseURL}/whychoose/`, data, { headers: authHeaders });
-const createPoint   = (data) => axios.post(`${baseURL}/whychoose-points/`, data, { headers: authHeaders });
-const updatePoint   = ({ id, ...data }) => axios.patch(`${baseURL}/whychoose-points/${id}/`, data, { headers: authHeaders });
-const deletePoint   = (id) => axios.delete(`${baseURL}/whychoose-points/${id}/`, { headers: authHeaders });
-const createCard    = (data) => axios.post(`${baseURL}/whychoose-cards/`, data, { headers: authHeaders });
-const updateCard    = ({ id, ...data }) => axios.patch(`${baseURL}/whychoose-cards/${id}/`, data, { headers: authHeaders });
-const deleteCard    = (id) => axios.delete(`${baseURL}/whychoose-cards/${id}/`, { headers: authHeaders });
-const createCounter = (data) => axios.post(`${baseURL}/whychoose-counters/`, data, { headers: authHeaders });
-const updateCounter = ({ id, ...data }) => axios.patch(`${baseURL}/whychoose-counters/${id}/`, data, { headers: authHeaders });
-const deleteCounter = (id) => axios.delete(`${baseURL}/whychoose-counters/${id}/`, { headers: authHeaders });
+const saveSection   = ({ id, ...data }) => id ? axios.patch(`${baseURL}/whychoose/${id}/`, data ) : axios.post(`${baseURL}/whychoose/`, data );
+const createPoint   = (data) => axios.post(`${baseURL}/whychoose-points/`, data );
+const updatePoint   = ({ id, ...data }) => axios.patch(`${baseURL}/whychoose-points/${id}/`, data);
+const deletePoint   = (id) => axios.delete(`${baseURL}/whychoose-points/${id}/`);
+const createCard    = (data) => axios.post(`${baseURL}/whychoose-cards/`, data);
+const updateCard    = ({ id, ...data }) => axios.patch(`${baseURL}/whychoose-cards/${id}/`, data);
+const deleteCard    = (id) => axios.delete(`${baseURL}/whychoose-cards/${id}/`);
+const createCounter = (data) => axios.post(`${baseURL}/whychoose-counters/`, data);
+const updateCounter = ({ id, ...data }) => axios.patch(`${baseURL}/whychoose-counters/${id}/`, data);
+const deleteCounter = (id) => axios.delete(`${baseURL}/whychoose-counters/${id}/`);
 
 // ─────────────────────────────────────────────
 // SHARED UI PRIMITIVES

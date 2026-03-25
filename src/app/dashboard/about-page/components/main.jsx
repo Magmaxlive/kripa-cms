@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import AboutFirstSectionForm from "./StoryForm";
 import MissionVisionForm from "./MissionVisionForm";
 import CoreValues from "./CoreValues";
-import CapabilityForm from "./TeamForm";
 import TeamSection from "./TeamForm"
 
 

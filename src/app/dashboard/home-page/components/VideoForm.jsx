@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
-import { baseURL, authToken } from "@/auth/auth";
+import { baseURL } from "@/auth/auth";
 import { FiEdit, FiTrash, FiPlus, FiX } from "react-icons/fi";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
@@ -9,18 +9,17 @@ import { toast } from "react-toastify";
 // ─────────────────────────────────────────────
 // API
 // ─────────────────────────────────────────────
-const authHeaders = { Authorization: `Bearer ${authToken}` };
 
 const fetchSection = () => axios.get(`${baseURL}/insights-section/`).then(r => r.data);
 const saveSection  = ({ id, ...data }) =>
   id
-    ? axios.patch(`${baseURL}/insights-section/${id}/`, data, { headers: authHeaders })
-    : axios.post(`${baseURL}/insights-section/`, data,        { headers: authHeaders });
+    ? axios.patch(`${baseURL}/insights-section/${id}/`, data)
+    : axios.post(`${baseURL}/insights-section/`, data);
 
 const fetchVideos   = () => axios.get(`${baseURL}/insights-videos/`).then(r => r.data);
-const createVideo   = (data) => axios.post(`${baseURL}/insights-videos/`, data,         { headers: authHeaders });
-const updateVideo   = ({ id, ...data }) => axios.patch(`${baseURL}/insights-videos/${id}/`, data, { headers: authHeaders });
-const deleteVideo   = (id) => axios.delete(`${baseURL}/insights-videos/${id}/`,              { headers: authHeaders });
+const createVideo   = (data) => axios.post(`${baseURL}/insights-videos/`, data);
+const updateVideo   = ({ id, ...data }) => axios.patch(`${baseURL}/insights-videos/${id}/`, data);
+const deleteVideo   = (id) => axios.delete(`${baseURL}/insights-videos/${id}/`);
 
 // ─────────────────────────────────────────────
 // SHARED UI

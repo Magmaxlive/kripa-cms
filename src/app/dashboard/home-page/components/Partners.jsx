@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
-import { baseURL, authToken } from "@/auth/auth";
+import { baseURL } from "@/auth/auth";
 import Loader from "@/components/Loader/loader";
 import { FiEdit, FiTrash, FiPlus, FiX } from "react-icons/fi";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -13,21 +13,19 @@ const fetchPartners = () =>
 
 const createPartner = (data) =>
   axios.post(`${baseURL}/partners/`, data, {
-    headers: { Authorization: `Bearer ${authToken}`, "Content-Type": "multipart/form-data" },
+    headers: {  "Content-Type": "multipart/form-data" },
   });
 
 const updatePartner = (formData) => {
   const id = formData.get("id");
   formData.delete("id");
   return axios.patch(`${baseURL}/partners/${id}/`, formData, {
-    headers: { Authorization: `Bearer ${authToken}`, "Content-Type": "multipart/form-data" },
+    headers: { "Content-Type": "multipart/form-data" },
   });
 };
 
 const deletePartner = (id) =>
-  axios.delete(`${baseURL}/partners/${id}/`, {
-    headers: { Authorization: `Bearer ${authToken}` },
-  });
+  axios.delete(`${baseURL}/partners/${id}/`);
 
 // ---------- MODAL WRAPPER ----------
 const Modal = ({ isOpen, onClose, title, children }) => {

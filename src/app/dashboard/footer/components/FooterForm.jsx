@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
-import { baseURL, authToken } from "@/auth/auth";
+import { baseURL} from "@/auth/auth";
 import { FiEdit, FiTrash, FiPlus, FiX } from "react-icons/fi";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
@@ -9,8 +9,7 @@ import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 // ---------- API ----------
-const authHeaders      = { Authorization: `Bearer ${authToken}` };
-const multipartHeaders = { ...authHeaders, "Content-Type": "multipart/form-data" };
+const multipartHeaders = {"Content-Type": "multipart/form-data" };
 
 // Footer
 const fetchFooter = () =>
@@ -29,15 +28,15 @@ const saveFooter = (formData) => {
 
 // Emails
 const fetchEmails  = () => axios.get(`${baseURL}/footer-emails/`).then(r => r.data);
-const createEmail  = (data) => axios.post(`${baseURL}/footer-emails/`, data, { headers: authHeaders });
-const updateEmail  = ({ id, ...data }) => axios.patch(`${baseURL}/footer-emails/${id}/`, data, { headers: authHeaders });
-const deleteEmail  = (id) => axios.delete(`${baseURL}/footer-emails/${id}/`, { headers: authHeaders });
+const createEmail  = (data) => axios.post(`${baseURL}/footer-emails/`, data);
+const updateEmail  = ({ id, ...data }) => axios.patch(`${baseURL}/footer-emails/${id}/`, data);
+const deleteEmail  = (id) => axios.delete(`${baseURL}/footer-emails/${id}/`);
 
 // Links
 const fetchLinks  = () => axios.get(`${baseURL}/footer-links/`).then(r => r.data);
-const createLink  = (data) => axios.post(`${baseURL}/footer-links/`, data, { headers: authHeaders });
-const updateLink  = ({ id, ...data }) => axios.patch(`${baseURL}/footer-links/${id}/`, data, { headers: authHeaders });
-const deleteLink  = (id) => axios.delete(`${baseURL}/footer-links/${id}/`, { headers: authHeaders });
+const createLink  = (data) => axios.post(`${baseURL}/footer-links/`, data);
+const updateLink  = ({ id, ...data }) => axios.patch(`${baseURL}/footer-links/${id}/`, data);
+const deleteLink  = (id) => axios.delete(`${baseURL}/footer-links/${id}/`);
 
 // ---------- CONSTANTS ----------
 const MAX_FILE_SIZE = 1 * 1024 * 1024;

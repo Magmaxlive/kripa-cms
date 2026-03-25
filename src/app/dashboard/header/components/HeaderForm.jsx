@@ -1,14 +1,13 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
-import { baseURL, authToken } from "@/auth/auth";
+import { baseURL } from "@/auth/auth";
 import { FiEdit, FiTrash, FiPlus, FiX, FiChevronDown, FiChevronUp, FiMenu } from "react-icons/fi";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
 // ---------- API ----------
-const authHeaders      = { Authorization: `Bearer ${authToken}` };
-const multipartHeaders = { ...authHeaders, "Content-Type": "multipart/form-data" };
+const multipartHeaders = {"Content-Type": "multipart/form-data" };
 
 // Header
 const fetchHeader = () =>
@@ -27,12 +26,12 @@ const saveHeader = (formData) => {
 
 // Menu
 const fetchMenu   = () => axios.get(`${baseURL}/menu/`).then(r => r.data);
-const createMenu  = (data) => axios.post(`${baseURL}/menu/`, data, { headers: authHeaders });
+const createMenu  = (data) => axios.post(`${baseURL}/menu/`, data);
 const updateMenu  = (data) => {
   const { id, ...rest } = data;
-  return axios.patch(`${baseURL}/menu/${id}/`, rest, { headers: authHeaders });
+  return axios.patch(`${baseURL}/menu/${id}/`, rest);
 };
-const deleteMenu  = (id) => axios.delete(`${baseURL}/menu/${id}/`, { headers: authHeaders });
+const deleteMenu  = (id) => axios.delete(`${baseURL}/menu/${id}/`);
 
 // ---------- CONSTANTS ----------
 const MAX_FILE_SIZE = 2 * 1024 * 1024;

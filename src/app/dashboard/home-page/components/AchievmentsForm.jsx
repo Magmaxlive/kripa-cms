@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
-import { baseURL, authToken } from "@/auth/auth";
+import { baseURL } from "@/auth/auth";
 import { FiEdit, FiTrash, FiPlus, FiX } from "react-icons/fi";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
@@ -9,26 +9,25 @@ import { toast } from "react-toastify";
 // ─────────────────────────────────────────────
 // API
 // ─────────────────────────────────────────────
-const authHeaders = { Authorization: `Bearer ${authToken}` };
 const MAX_SIZE = 1 * 1024 * 1024; // 1 MB
 
 const fetchAchievements = () => axios.get(`${baseURL}/achievements/`).then(r => r.data);
 
 const createAchievement = (formData) =>
   axios.post(`${baseURL}/achievements/`, formData, {
-    headers: { ...authHeaders, "Content-Type": "multipart/form-data" },
+    headers: { "Content-Type": "multipart/form-data" },
   });
 
 const updateAchievement = (formData) => {
   const id = formData.get("id");
   formData.delete("id");
   return axios.patch(`${baseURL}/achievements/${id}/`, formData, {
-    headers: { ...authHeaders, "Content-Type": "multipart/form-data" },
+    headers: { "Content-Type": "multipart/form-data" },
   });
 };
 
 const deleteAchievement = (id) =>
-  axios.delete(`${baseURL}/achievements/${id}/`, { headers: authHeaders });
+  axios.delete(`${baseURL}/achievements/${id}/`);
 
 // ─────────────────────────────────────────────
 // SHARED UI

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
-import { baseURL, authToken } from "@/auth/auth";
+import { baseURL } from "@/auth/auth";
 import { FiEdit, FiTrash, FiPlus, FiX } from "react-icons/fi";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
@@ -10,15 +10,14 @@ import DynamicIcon from '../../home-page/components/DynamicIcon'
 // ─────────────────────────────────────────────
 // API
 // ─────────────────────────────────────────────
-const authHeaders = { Authorization: `Bearer ${authToken}` };
 
 const fetchSection  = () => axios.get(`${baseURL}/core_values_section/`).then(r => r.data);
 const fetchCards    = () => axios.get(`${baseURL}/core_values_items/`).then(r => r.data);
 
-const saveSection   = ({ id, ...data }) => id ? axios.patch(`${baseURL}/core_values_section/${id}/`, data, { headers: authHeaders }) : axios.post(`${baseURL}/whychoose/`, data, { headers: authHeaders });
-const createCard    = (data) => axios.post(`${baseURL}/core_values_items/`, data, { headers: authHeaders });
-const updateCard    = ({ id, ...data }) => axios.patch(`${baseURL}/core_values_items/${id}/`, data, { headers: authHeaders });
-const deleteCard    = (id) => axios.delete(`${baseURL}/core_values_items/${id}/`, { headers: authHeaders });
+const saveSection   = ({ id, ...data }) => id ? axios.patch(`${baseURL}/core_values_section/${id}/`, data) : axios.post(`${baseURL}/whychoose/`, data);
+const createCard    = (data) => axios.post(`${baseURL}/core_values_items/`, data);
+const updateCard    = ({ id, ...data }) => axios.patch(`${baseURL}/core_values_items/${id}/`, data);
+const deleteCard    = (id) => axios.delete(`${baseURL}/core_values_items/${id}/`);
 
 // ─────────────────────────────────────────────
 // SHARED UI PRIMITIVES

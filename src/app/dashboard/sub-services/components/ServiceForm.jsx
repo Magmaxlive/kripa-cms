@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
-import { baseURL, authToken } from "@/auth/auth";
+import { baseURL } from "@/auth/auth";
 import { FiEdit, FiTrash, FiPlus, FiX, FiHelpCircle, FiChevronDown, FiChevronUp } from "react-icons/fi";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
@@ -9,8 +9,7 @@ import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 // ---------- API FUNCTIONS ----------
-const authHeaders      = { Authorization: `Bearer ${authToken}` };
-const multipartHeaders = { ...authHeaders, "Content-Type": "multipart/form-data" };
+const multipartHeaders = {"Content-Type": "multipart/form-data" };
 
 const fetchCategories = () => axios.get(`${baseURL}/service-categories/`).then(r => r.data);
 const fetchServices   = () => axios.get(`${baseURL}/services/`).then(r => r.data);
@@ -21,12 +20,12 @@ const updateService = (formData) => {
   formData.delete("id");
   return axios.patch(`${baseURL}/services/${id}/`, formData, { headers: multipartHeaders });
 };
-const deleteService = (id) => axios.delete(`${baseURL}/services/${id}/`, { headers: authHeaders });
+const deleteService = (id) => axios.delete(`${baseURL}/services/${id}/`);
 
 const fetchServiceFaqs = (serviceId) => axios.get(`${baseURL}/service-faq/`, { params: { service: serviceId } }).then(r => r.data);
-const createServiceFaq = ({ serviceId, question, answer }) => axios.post(`${baseURL}/service-faq/`, { service: serviceId, question, answer }, { headers: authHeaders });
-const updateServiceFaq = ({ id, question, answer }) => axios.patch(`${baseURL}/service-faq/${id}/`, { question, answer }, { headers: authHeaders });
-const deleteServiceFaq = (id) => axios.delete(`${baseURL}/service-faq/${id}/`, { headers: authHeaders });
+const createServiceFaq = ({ serviceId, question, answer }) => axios.post(`${baseURL}/service-faq/`, { service: serviceId, question, answer });
+const updateServiceFaq = ({ id, question, answer }) => axios.patch(`${baseURL}/service-faq/${id}/`, { question, answer });
+const deleteServiceFaq = (id) => axios.delete(`${baseURL}/service-faq/${id}/`,);
 
 // ---------- CONSTANTS ----------
 const MAX_IMAGE_SIZE = 1 * 1024 * 1024;

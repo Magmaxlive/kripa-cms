@@ -11,7 +11,6 @@ import { toast } from "react-toastify";
 // ─────────────────────────────────────────────
 // API
 // ─────────────────────────────────────────────
-const authHeaders = { Authorization: `Bearer ${authToken}` };
 const MAX_SIZE = 1 * 1024 * 1024; // 1 MB
 
 const fetchSection = () => axios.get(`${baseURL}/about-first-section/`).then(r => r.data);
@@ -20,7 +19,7 @@ const saveSection = (formData) => {
   const id = formData.get("id");
   formData.delete("id");
   return axios.patch(`${baseURL}/about-first-section/${id}/`, formData, {
-    headers: { ...authHeaders, "Content-Type": "multipart/form-data" },
+    headers: {"Content-Type": "multipart/form-data" },
   });
 };
 

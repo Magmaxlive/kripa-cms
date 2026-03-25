@@ -16,7 +16,7 @@ import { PiBagSimpleBold } from "react-icons/pi";
 import { FaRegQuestionCircle,FaWpforms  } from "react-icons/fa";
 import { LuPaintbrushVertical } from "react-icons/lu";
 import { RiContactsLine } from "react-icons/ri";
-
+import { FiHome } from "react-icons/fi";
 
 
 
@@ -31,9 +31,20 @@ import { RiContactsLine } from "react-icons/ri";
 
 
 const menuGroups = [
+
+ { name: "",
+    menuItems: [
+  {
+        icon: (<FiHome size="25" />),
+        label: "Dashboard",
+        route: "/dashboard/",
+      },
+    ]
+  },
   {
     name: "CONTENT MANAGEMENT",
     menuItems: [
+      
       {
         icon: (<MdOutlineSpaceDashboard size="25" />),
         label: "Home Page",
@@ -73,6 +84,12 @@ const menuGroups = [
         icon: (<FaRegQuestionCircle size="25" />),
         label: "Faq Page",
         route: "/dashboard/faqs",
+      },
+
+      {
+        icon: (<FaRegQuestionCircle size="25" />),
+        label: "Community Page",
+        route: "/dashboard/community",
       },
 
       {
@@ -148,17 +165,7 @@ const menuGroups = [
     ]
   },
 
-  {
-    name: "ACCOUNT",
-    menuItems: [
-      {
-        icon: (<LuLayoutPanelTop size="25" />),
-        label: "Change Password",
-        route: "/dashboard/messages",
-      },
-      
-    ]
-  },
+  
 
 
   // {

@@ -29,7 +29,7 @@ export default function SigninWithPassword() {
     });
 
     if (res.ok){
-      router.push('/dashboard/home-page');
+      router.push('/dashboard/');
     }else{
       const data = await res.json();
       setError(data.error || 'Invalid credentials Provided')

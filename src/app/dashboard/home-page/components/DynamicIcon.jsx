@@ -1,14 +1,17 @@
-import * as icons from 'lucide-react'
+import * as icons from "lucide-react";
 
+export default function DynamicIcon({ name, size = 24, className, color, strokeWidth }) {
+  if (!name) return null;
 
-const DynamicIcon = ({name,size=24,className}) => {
-  const Icon = icons[name]
+  // Convert kebab-case to PascalCase: "map-pin" → "MapPin"
+  const pascalName = name
+    .split("-")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join("");
 
-    if (!Icon){
-        return null;
-    } 
+  const Icon = icons[pascalName] || icons[name];
 
-  return <Icon size={size} className={className} />
+  if (!Icon) return null;
+
+  return <Icon size={size} className={className} color={color} strokeWidth={strokeWidth} />;
 }
-
-export default DynamicIcon

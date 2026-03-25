@@ -1,17 +1,16 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
-import { baseURL, authToken } from "@/auth/auth";
+import { baseURL} from "@/auth/auth";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { FiRefreshCw } from "react-icons/fi";
 
 // ---------- API ----------
-const authHeaders = { Authorization: `Bearer ${authToken}` };
 
 const fetchTheme  = () => axios.get(`${baseURL}/theme/`).then(r => r.data);
-const updateTheme = (data) => axios.patch(`${baseURL}/theme/update/`, data, { headers: authHeaders });
-const resetTheme  = () => axios.post(`${baseURL}/theme/reset/`, {}, { headers: authHeaders });
+const updateTheme = (data) => axios.patch(`${baseURL}/theme/update/`, data);
+const resetTheme  = () => axios.post(`${baseURL}/theme/reset/`, {});
 
 // ---------- DEFAULT VALUES ----------
 const DEFAULTS = {

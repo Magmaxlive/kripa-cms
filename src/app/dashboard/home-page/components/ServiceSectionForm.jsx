@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { baseURL, authToken } from "@/auth/auth";
+import { baseURL } from "@/auth/auth";
 import Loader from "@/components/Loader/loader";
 import { FiEdit, FiTrash, FiPlus, FiX } from "react-icons/fi";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -13,12 +13,8 @@ const fetchServiceSection = () =>
 
 const saveServiceSection = ({ id, ...data }) =>
   id
-    ? axios.patch(`${baseURL}/service-section/${id}/`, data, {
-        headers: { Authorization: `Bearer ${authToken}` },
-      })
-    : axios.post(`${baseURL}/service-section/`, data, {
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
+    ? axios.patch(`${baseURL}/service-section/${id}/`, data)
+    : axios.post(`${baseURL}/service-section/`, data);
 
 // ---------- Service_category API ----------
 const fetchCategories = () =>
@@ -26,21 +22,19 @@ const fetchCategories = () =>
 
 const createCategory = (formData) =>
   axios.post(`${baseURL}/service-categories/`, formData, {
-    headers: { Authorization: `Bearer ${authToken}`, "Content-Type": "multipart/form-data" },
+    headers: {"Content-Type": "multipart/form-data" },
   });
 
 const updateCategory = (formData) => {
   const id = formData.get("id");
   formData.delete("id");
   return axios.patch(`${baseURL}/service-categories/${id}/`, formData, {
-    headers: { Authorization: `Bearer ${authToken}`, "Content-Type": "multipart/form-data" },
+    headers: {"Content-Type": "multipart/form-data" },
   });
 };
 
 const deleteCategory = (id) =>
-  axios.delete(`${baseURL}/service-categories/${id}/`, {
-    headers: { Authorization: `Bearer ${authToken}` },
-  });
+  axios.delete(`${baseURL}/service-categories/${id}/`);
 
 // ---------- SHARED UI ----------
 const Modal = ({ isOpen, onClose, title, children }) => {

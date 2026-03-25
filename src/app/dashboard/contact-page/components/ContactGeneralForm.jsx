@@ -1,18 +1,17 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
-import { baseURL, authToken } from "@/auth/auth";
+import { baseURL} from "@/auth/auth";
 import { FiEdit, FiX } from "react-icons/fi";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
 // ---------- API FUNCTIONS ----------
-const authHeaders      = { Authorization: `Bearer ${authToken}` };
-const multipartHeaders = { ...authHeaders, "Content-Type": "multipart/form-data" };
+const multipartHeaders = {"Content-Type": "multipart/form-data" };
 
 // Contact Card Section
 const fetchContactCard = () => axios.get(`${baseURL}/contact-card-section/`).then(r => { const d = r.data; return Array.isArray(d) ? d[0] || null : d || null; });
-const saveContactCard  = ({ id, ...data }) => id ? axios.patch(`${baseURL}/contact-card-section/${id}/`, data, { headers: authHeaders }) : axios.post(`${baseURL}/contact-card-section/`, data, { headers: authHeaders });
+const saveContactCard  = ({ id, ...data }) => id ? axios.patch(`${baseURL}/contact-card-section/${id}/`, data) : axios.post(`${baseURL}/contact-card-section/`, data);
 
 // Contact
 const fetchContact = () => axios.get(`${baseURL}/contact/`).then(r => { const d = r.data; return Array.isArray(d) ? d[0] || null : d || null; });
@@ -20,11 +19,11 @@ const saveContact  = (formData) => { const id = formData.get("id"); formData.del
 
 // Social Media
 const fetchSocialMedia = () => axios.get(`${baseURL}/social-media/`).then(r => { const d = r.data; return Array.isArray(d) ? d[0] || null : d || null; });
-const saveSocialMedia  = ({ id, ...data }) => id ? axios.patch(`${baseURL}/social-media/${id}/`, data, { headers: authHeaders }) : axios.post(`${baseURL}/social-media/`, data, { headers: authHeaders });
+const saveSocialMedia  = ({ id, ...data }) => id ? axios.patch(`${baseURL}/social-media/${id}/`, data) : axios.post(`${baseURL}/social-media/`, data);
 
 // Office Timings
 const fetchOfficeTimings = () => axios.get(`${baseURL}/office-timings/`).then(r => { const d = r.data; return Array.isArray(d) ? d[0] || null : d || null; });
-const saveOfficeTimings  = ({ id, ...data }) => id ? axios.patch(`${baseURL}/office-timings/${id}/`, data, { headers: authHeaders }) : axios.post(`${baseURL}/office-timings/`, data, { headers: authHeaders });
+const saveOfficeTimings  = ({ id, ...data }) => id ? axios.patch(`${baseURL}/office-timings/${id}/`, data) : axios.post(`${baseURL}/office-timings/`, data);
 
 // ---------- CONSTANTS ----------
 const MAX_IMAGE_SIZE = 1 * 1024 * 1024;

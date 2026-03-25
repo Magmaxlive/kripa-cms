@@ -1,5 +1,5 @@
 import axios from "axios";
-import { app_id, app_secret, baseURL } from "./auth";
+import { baseURL } from "./auth";
 
 var my_profile_name;
 var my_profile_id;

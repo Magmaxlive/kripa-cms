@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
-import { baseURL, authToken } from "@/auth/auth";
+import { baseURL } from "@/auth/auth";
 import { FiEdit, FiTrash, FiPlus, FiX, FiChevronDown, FiChevronUp } from "react-icons/fi";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
@@ -9,12 +9,11 @@ import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 // ---------- API ----------
-const authHeaders = { Authorization: `Bearer ${authToken}` };
 
 const fetchFaqs   = () => axios.get(`${baseURL}/general-faqs/`).then(r => r.data);
-const createFaq   = (data) => axios.post(`${baseURL}/general-faqs/`, data, { headers: authHeaders });
-const updateFaq   = ({ id, ...data }) => axios.patch(`${baseURL}/general-faqs/${id}/`, data, { headers: authHeaders });
-const deleteFaq   = (id) => axios.delete(`${baseURL}/general-faqs/${id}/`, { headers: authHeaders });
+const createFaq   = (data) => axios.post(`${baseURL}/general-faqs/`, data);
+const updateFaq   = ({ id, ...data }) => axios.patch(`${baseURL}/general-faqs/${id}/`, data);
+const deleteFaq   = (id) => axios.delete(`${baseURL}/general-faqs/${id}/`);
 
 // ---------- MODAL ----------
 const Modal = ({ isOpen, onClose, title, children }) => {

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
-import { baseURL, authToken } from "@/auth/auth";
+import { baseURL } from "@/auth/auth";
 import { FiEdit, FiTrash, FiPlus, FiX, FiStar } from "react-icons/fi";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
@@ -9,22 +9,21 @@ import { toast } from "react-toastify";
 // ─────────────────────────────────────────────
 // API
 // ─────────────────────────────────────────────
-const authHeaders = { Authorization: `Bearer ${authToken}` };
 
 const fetchSection      = () => axios.get(`${baseURL}/testimonials-section/`).then(r => r.data);
 const saveSection       = ({ id, ...data }) =>
-  id ? axios.patch(`${baseURL}/testimonials-section/${id}/`, data, { headers: authHeaders })
-     : axios.post(`${baseURL}/testimonials-section/`, data,        { headers: authHeaders });
+  id ? axios.patch(`${baseURL}/testimonials-section/${id}/`, data)
+     : axios.post(`${baseURL}/testimonials-section/`, data);
 
 const fetchTestimonials  = () => axios.get(`${baseURL}/testimonials/`).then(r => r.data);
-const createTestimonial  = (data) => axios.post(`${baseURL}/testimonials/`, data,              { headers: authHeaders });
-const updateTestimonial  = ({ id, ...data }) => axios.patch(`${baseURL}/testimonials/${id}/`, data, { headers: authHeaders });
-const deleteTestimonial  = (id) => axios.delete(`${baseURL}/testimonials/${id}/`,              { headers: authHeaders });
+const createTestimonial  = (data) => axios.post(`${baseURL}/testimonials/`, data);
+const updateTestimonial  = ({ id, ...data }) => axios.patch(`${baseURL}/testimonials/${id}/`);
+const deleteTestimonial  = (id) => axios.delete(`${baseURL}/testimonials/${id}/`);
 
 const fetchMembers       = () => axios.get(`${baseURL}/accredited-members/`).then(r => r.data);
-const createMember       = (data) => axios.post(`${baseURL}/accredited-members/`, data,              { headers: authHeaders });
-const updateMember       = ({ id, ...data }) => axios.patch(`${baseURL}/accredited-members/${id}/`, data, { headers: authHeaders });
-const deleteMember       = (id) => axios.delete(`${baseURL}/accredited-members/${id}/`,              { headers: authHeaders });
+const createMember       = (data) => axios.post(`${baseURL}/accredited-members/`, data);
+const updateMember       = ({ id, ...data }) => axios.patch(`${baseURL}/accredited-members/${id}/`);
+const deleteMember       = (id) => axios.delete(`${baseURL}/accredited-members/${id}/`);
 
 // ─────────────────────────────────────────────
 // SHARED UI

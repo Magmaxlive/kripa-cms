@@ -14,12 +14,8 @@ const fetchTeamSection = () =>
 
 const saveTeamSection = ({ id, ...data }) =>
   id
-    ? axios.patch(`${baseURL}/team-section/${id}/`, data, {
-        headers: { Authorization: `Bearer ${authToken}` },
-      })
-    : axios.post(`${baseURL}/team-section/`, data, {
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
+    ? axios.patch(`${baseURL}/team-section/${id}/`, data)
+    : axios.post(`${baseURL}/team-section/`, data);
 
 const fetchTeamMembers = () =>
   axios.get(`${baseURL}/team-members/`).then((res) => res.data);
@@ -27,7 +23,6 @@ const fetchTeamMembers = () =>
 const createTeamMember = (formData) =>
   axios.post(`${baseURL}/team-members/`, formData, {
     headers: {
-      Authorization: `Bearer ${authToken}`,
       "Content-Type": "multipart/form-data",
     },
   });
@@ -37,16 +32,13 @@ const updateTeamMember = (formData) => {
   formData.delete("id");
   return axios.patch(`${baseURL}/team-members/${id}/`, formData, {
     headers: {
-      Authorization: `Bearer ${authToken}`,
       "Content-Type": "multipart/form-data",
     },
   });
 };
 
 const deleteTeamMember = (id) =>
-  axios.delete(`${baseURL}/team-members/${id}/`, {
-    headers: { Authorization: `Bearer ${authToken}` },
-  });
+  axios.delete(`${baseURL}/team-members/${id}/`);
 
 // ---------- CONSTANTS ----------
 const MAX_IMAGE_SIZE = 1 * 1024 * 1024;

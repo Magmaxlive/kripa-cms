@@ -1,22 +1,21 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
-import { baseURL, authToken } from "@/auth/auth";
+import { baseURL} from "@/auth/auth";
 import { FiTrash, FiX, FiMail } from "react-icons/fi";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
 // ---------- API ----------
-const authHeaders = { Authorization: `Bearer ${authToken}` };
 
 const fetchSubscribers = ({ page = 1, search = "" } = {}) => {
   const params = new URLSearchParams({ page });
   if (search) params.append("search", search);
-  return axios.get(`${baseURL}/subscribers/?${params}`, { headers: authHeaders }).then(r => r.data);
+  return axios.get(`${baseURL}/subscribers/?${params}`).then(r => r.data);
 };
 
 const deleteSubscriber = (id) =>
-  axios.delete(`${baseURL}/subscribers/${id}/`, { headers: authHeaders });
+  axios.delete(`${baseURL}/subscribers/${id}/`);
 
 // ---------- MAIN COMPONENT ----------
 const SubscriberList = () => {
