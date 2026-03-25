@@ -1,21 +1,44 @@
+// src/middleware.js
 import { NextResponse } from "next/server";
 
-export function middleware(request) {
-  const isLoggedIn = request.cookies.get("isLoggedIn")?.value;
+export async function middleware(request) {
   const { pathname } = request.nextUrl;
 
-  if (pathname === "/") {
-    return NextResponse.redirect(
-      new URL(isLoggedIn ? "/dashboard/home-page" : "/auth/signin", request.url)
-    );
-  }
+  // Get cookies from the request to forward to backend
+  const cookieHeader = request.headers.get("cookie") || "";
 
-  if (!isLoggedIn && pathname.startsWith("/dashboard")) {
+  if (pathname === "/") {
+    // Check auth by calling backend
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/auth/profile/`, {
+        headers: { cookie: cookieHeader },
+      });
+      if (res.ok) {
+        return NextResponse.redirect(new URL("/dashboard/home-page", request.url));
+      }
+    } catch {}
     return NextResponse.redirect(new URL("/auth/signin", request.url));
   }
 
-  if (isLoggedIn && pathname === "/auth/signin") {
-    return NextResponse.redirect(new URL("/dashboard/home-page", request.url));
+  if (pathname.startsWith("/dashboard")) {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/auth/profile/`, {
+        headers: { cookie: cookieHeader },
+      });
+      if (res.ok) return NextResponse.next();
+    } catch {}
+    return NextResponse.redirect(new URL("/auth/signin", request.url));
+  }
+
+  if (pathname === "/auth/signin") {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/auth/profile/`, {
+        headers: { cookie: cookieHeader },
+      });
+      if (res.ok) {
+        return NextResponse.redirect(new URL("/dashboard/home-page", request.url));
+      }
+    } catch {}
   }
 
   return NextResponse.next();
