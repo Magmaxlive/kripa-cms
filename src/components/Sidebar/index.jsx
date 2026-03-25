@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import SidebarItem from "@/components/Sidebar/SidebarItem";
 import ClickOutside from "@/components/ClickOutside";
-import { MdOutlineSpaceDashboard,MdOutlineInfo } from "react-icons/md";
+import { MdOutlineSpaceDashboard,MdEventAvailable  } from "react-icons/md";
 import { TiMessages, TiMessage } from "react-icons/ti";
 import { AiOutlineAppstore, AiOutlineProduct, AiOutlineSetting } from "react-icons/ai";
 import { PiNewspaper } from "react-icons/pi";
@@ -87,7 +87,7 @@ const menuGroups = [
       },
 
       {
-        icon: (<FaRegQuestionCircle size="25" />),
+        icon: (<MdEventAvailable size="25" />),
         label: "Community Page",
         route: "/dashboard/community",
       },
