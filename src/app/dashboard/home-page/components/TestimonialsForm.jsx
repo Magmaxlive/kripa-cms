@@ -17,12 +17,12 @@ const saveSection       = ({ id, ...data }) =>
 
 const fetchTestimonials  = () => axios.get(`${baseURL}/testimonials/`).then(r => r.data);
 const createTestimonial  = (data) => axios.post(`${baseURL}/testimonials/`, data);
-const updateTestimonial  = ({ id, ...data }) => axios.patch(`${baseURL}/testimonials/${id}/`);
+const updateTestimonial  = ({ id, ...data }) => axios.patch(`${baseURL}/testimonials/${id}/`,data);
 const deleteTestimonial  = (id) => axios.delete(`${baseURL}/testimonials/${id}/`);
 
 const fetchMembers       = () => axios.get(`${baseURL}/accredited-members/`).then(r => r.data);
 const createMember       = (data) => axios.post(`${baseURL}/accredited-members/`, data);
-const updateMember       = ({ id, ...data }) => axios.patch(`${baseURL}/accredited-members/${id}/`);
+const updateMember       = ({ id, ...data }) => axios.patch(`${baseURL}/accredited-members/${id}/`,data);
 const deleteMember       = (id) => axios.delete(`${baseURL}/accredited-members/${id}/`);
 
 // ─────────────────────────────────────────────

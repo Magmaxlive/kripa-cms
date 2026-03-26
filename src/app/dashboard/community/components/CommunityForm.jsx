@@ -23,7 +23,9 @@ const updateCategory  = ({ id, ...d }) => axios.patch(`${baseURL}/event-categori
 const deleteCategory  = (id) => axios.delete(`${baseURL}/event-categories/${id}/`);
 
 const fetchEvents     = () => axios.get(`${baseURL}/events/`).then(r => r.data);
+// createEvent receives FormData directly
 const createEvent     = (fd) => axios.post(`${baseURL}/events/`, fd);
+// updateEvent receives { id, fd } — patches with FormData
 const updateEvent     = ({ id, fd }) => axios.patch(`${baseURL}/events/${id}/`, fd);
 const deleteEvent     = (id) => axios.delete(`${baseURL}/events/${id}/`);
 
@@ -136,7 +138,11 @@ const SectionModal = ({ isOpen, onClose, data }) => {
   const [errors, setErrors] = useState({});
   const bannerRef = useRef(null);
 
-  React.useEffect(() => { setForm({ minor_heading: data?.minor_heading || "", paragraph: data?.paragraph || "" }); setBannerFile(null); setErrors({}); }, [data, isOpen]);
+  React.useEffect(() => {
+    setForm({ minor_heading: data?.minor_heading || "", paragraph: data?.paragraph || "" });
+    setBannerFile(null);
+    setErrors({});
+  }, [data, isOpen]);
 
   const set = (k) => (e) => { setForm(f => ({ ...f, [k]: e.target.value })); setErrors(ev => ({ ...ev, [k]: "" })); };
 
@@ -188,7 +194,10 @@ const CounterModal = ({ isOpen, onClose, data }) => {
   const [form, setForm] = useState({ number: data?.number || "", label: data?.label || "", order: data?.order ?? 0 });
   const [errors, setErrors] = useState({});
 
-  React.useEffect(() => { setForm({ number: data?.number || "", label: data?.label || "", order: data?.order ?? 0 }); setErrors({}); }, [data, isOpen]);
+  React.useEffect(() => {
+    setForm({ number: data?.number || "", label: data?.label || "", order: data?.order ?? 0 });
+    setErrors({});
+  }, [data, isOpen]);
 
   const set = (k) => (e) => { setForm(f => ({ ...f, [k]: e.target.value })); setErrors(ev => ({ ...ev, [k]: "" })); };
 
@@ -298,15 +307,12 @@ const EventImagesModal = ({ isOpen, onClose, event }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={`Gallery — ${event?.title}`} maxWidth="max-w-3xl">
       <div className="flex flex-col gap-5">
-        {/* Upload */}
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium">Upload Images <span className="text-gray-400 font-normal">(multiple allowed, max 1 MB each)</span></label>
           <input ref={fileInputRef} type="file" accept="image/*" multiple onChange={handleUpload}
             className="text-sm file:mr-3 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-medium file:bg-primary file:text-white hover:file:bg-opacity-90 cursor-pointer" />
           {uploading && <p className="text-xs text-primary">Uploading...</p>}
         </div>
-
-        {/* Grid */}
         {isLoading ? (
           <p className="text-sm text-gray-400">Loading images...</p>
         ) : images.length === 0 ? (
@@ -338,22 +344,34 @@ const EventImagesModal = ({ isOpen, onClose, event }) => {
 const EventModal = ({ isOpen, onClose, data, categoryOptions }) => {
   const qc = useQueryClient();
   const isEdit = !!data;
+
   const [form, setForm] = useState({
-    title: data?.title || "", date: data?.date || "", location: data?.location || "",
-    description: data?.description || "", category: data?.category || "",
-    link: data?.link || "", is_featured: data?.is_featured ?? false, is_active: data?.is_active ?? true,
+    title:       data?.title       || "",
+    date:        data?.date        || "",
+    location:    data?.location    || "",
+    description: data?.description || "",
+    category:    data?.category    || "",
+    link:        data?.link        || "",
+    is_featured: data?.is_featured ?? false,
+    is_active:   data?.is_active   ?? true,
   });
   const [coverFile, setCoverFile] = useState(null);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors]       = useState({});
   const coverRef = useRef(null);
 
   React.useEffect(() => {
     setForm({
-      title: data?.title || "", date: data?.date || "", location: data?.location || "",
-      description: data?.description || "", category: data?.category || "",
-      link: data?.link || "", is_featured: data?.is_featured ?? false, is_active: data?.is_active ?? true,
+      title:       data?.title       || "",
+      date:        data?.date        || "",
+      location:    data?.location    || "",
+      description: data?.description || "",
+      category:    data?.category    || "",
+      link:        data?.link        || "",
+      is_featured: data?.is_featured ?? false,
+      is_active:   data?.is_active   ?? true,
     });
-    setCoverFile(null); setErrors({});
+    setCoverFile(null);
+    setErrors({});
   }, [data, isOpen]);
 
   const set = (k) => (e) => { setForm(f => ({ ...f, [k]: e.target.value })); setErrors(ev => ({ ...ev, [k]: "" })); };
@@ -367,20 +385,33 @@ const EventModal = ({ isOpen, onClose, data, categoryOptions }) => {
   const mutation = useMutation({
     mutationFn: isEdit ? updateEvent : createEvent,
     onSuccess: () => { qc.invalidateQueries(["events"]); toast.success(`Event ${isEdit ? "updated" : "created"}!`); onClose(); },
-    onError: () => toast.error("Failed to save event."),
+    onError: (err) => {
+      console.error("Event save error:", err?.response?.data);
+      toast.error("Failed to save event.");
+    },
   });
 
   const handleSubmit = () => {
     const e = {};
-    if (!form.title.trim())       e.title    = "Required.";
-    if (!form.date)                e.date     = "Required.";
-    if (!form.location.trim())    e.location  = "Required.";
+    if (!form.title.trim())       e.title       = "Required.";
+    if (!form.date)               e.date        = "Required.";
+    if (!form.location.trim())    e.location    = "Required.";
     if (!form.description.trim()) e.description = "Required.";
     if (!isEdit && !coverFile)    e.cover_image = "Cover image required.";
     if (Object.keys(e).length) { setErrors(e); return; }
+
+    // Build FormData explicitly — avoids issues with booleans and empty strings
     const fd = new FormData();
-    Object.entries(form).forEach(([k, v]) => fd.append(k, v));
+    fd.append("title",       form.title.trim());
+    fd.append("date",        form.date);
+    fd.append("location",    form.location.trim());
+    fd.append("description", form.description.trim());
+    fd.append("is_featured", form.is_featured ? "true" : "false");
+    fd.append("is_active",   form.is_active   ? "true" : "false");
+    if (form.category) fd.append("category", form.category);
+    if (form.link.trim()) fd.append("link", form.link.trim());
     if (coverFile) fd.append("cover_image", coverFile);
+
     mutation.mutate(isEdit ? { id: data.id, fd } : fd);
   };
 
@@ -389,7 +420,7 @@ const EventModal = ({ isOpen, onClose, data, categoryOptions }) => {
       <div className="flex flex-col gap-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Title" id="title" required value={form.title} error={errors.title} onChange={set("title")} placeholder="Financial Planning Workshop" />
-          <Field label="Date" id="date" required type="date" value={form.date} error={errors.date} onChange={set("date")} />
+          <Field label="Date"  id="date"  required type="date" value={form.date} error={errors.date} onChange={set("date")} />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Location" id="location" required value={form.location} error={errors.location} onChange={set("location")} placeholder="Auckland" />
@@ -403,7 +434,7 @@ const EventModal = ({ isOpen, onClose, data, categoryOptions }) => {
           fileInputRef={coverRef} error={errors.cover_image} />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <ToggleField label="Featured" description="Show in featured spotlight" checked={form.is_featured} onChange={(v) => setForm(f => ({ ...f, is_featured: v }))} />
-          <ToggleField label="Active"   description="Show on the frontend"        checked={form.is_active}   onChange={(v) => setForm(f => ({ ...f, is_active: v }))} />
+          <ToggleField label="Active"   description="Show on the frontend"       checked={form.is_active}   onChange={(v) => setForm(f => ({ ...f, is_active: v }))} />
         </div>
       </div>
       <ModalActions onClose={onClose} onSubmit={handleSubmit} submitting={mutation.isPending} isEdit={isEdit} />
@@ -428,10 +459,10 @@ const CommunityForm = () => {
   const [selectedEvent,    setSelectedEvent]    = useState(null);
   const [selectedImgEvent, setSelectedImgEvent] = useState(null);
 
-  const { data: section,    isLoading: loadingSection    } = useQuery({ queryKey: ["community-section"],   queryFn: fetchSection    });
-  const { data: counters,   isLoading: loadingCounters   } = useQuery({ queryKey: ["community-counters"],  queryFn: fetchCounters   });
-  const { data: categories, isLoading: loadingCategories } = useQuery({ queryKey: ["event-categories"],    queryFn: fetchCategories });
-  const { data: events,     isLoading: loadingEvents     } = useQuery({ queryKey: ["events"],              queryFn: fetchEvents     });
+  const { data: section,    isLoading: loadingSection    } = useQuery({ queryKey: ["community-section"],  queryFn: fetchSection    });
+  const { data: counters,   isLoading: loadingCounters   } = useQuery({ queryKey: ["community-counters"], queryFn: fetchCounters   });
+  const { data: categories, isLoading: loadingCategories } = useQuery({ queryKey: ["event-categories"],   queryFn: fetchCategories });
+  const { data: events,     isLoading: loadingEvents     } = useQuery({ queryKey: ["events"],             queryFn: fetchEvents     });
 
   const delCounter  = useMutation({ mutationFn: deleteCounter,  onSuccess: () => { qc.invalidateQueries(["community-counters"]); toast.success("Counter deleted!");  }, onError: () => toast.error("Failed.") });
   const delCategory = useMutation({ mutationFn: deleteCategory, onSuccess: () => { qc.invalidateQueries(["event-categories"]);  toast.success("Category deleted!"); }, onError: () => toast.error("Failed.") });
@@ -441,16 +472,15 @@ const CommunityForm = () => {
 
   return (
     <>
-      {/* Modals */}
-      <SectionModal  key={`sec-${section?.id}-${sectionModal}`}   isOpen={sectionModal}  onClose={() => setSectionModal(false)}  data={section} />
-      <CounterModal  key={`cnt-${selectedCounter?.id}-${counterModal}`}  isOpen={counterModal}  onClose={() => { setCounterModal(false);  setSelectedCounter(null);  }} data={selectedCounter}  />
-      <CategoryModal key={`cat-${selectedCategory?.id}-${categoryModal}`} isOpen={categoryModal} onClose={() => { setCategoryModal(false); setSelectedCategory(null); }} data={selectedCategory} />
-      <EventModal    key={`evt-${selectedEvent?.id}-${eventModal}`}    isOpen={eventModal}    onClose={() => { setEventModal(false);    setSelectedEvent(null);    }} data={selectedEvent}    categoryOptions={categoryOptions} />
+      <SectionModal  key={`sec-${section?.id}-${sectionModal}`}              isOpen={sectionModal}  onClose={() => setSectionModal(false)}                                    data={section} />
+      <CounterModal  key={`cnt-${selectedCounter?.id}-${counterModal}`}      isOpen={counterModal}  onClose={() => { setCounterModal(false);  setSelectedCounter(null);  }}   data={selectedCounter}  />
+      <CategoryModal key={`cat-${selectedCategory?.id}-${categoryModal}`}    isOpen={categoryModal} onClose={() => { setCategoryModal(false); setSelectedCategory(null); }}   data={selectedCategory} />
+      <EventModal    key={`evt-${selectedEvent?.id ?? "new"}-${eventModal}`} isOpen={eventModal}    onClose={() => { setEventModal(false);    setSelectedEvent(null);    }}   data={selectedEvent}    categoryOptions={categoryOptions} />
       <EventImagesModal isOpen={imagesModal} onClose={() => { setImagesModal(false); setSelectedImgEvent(null); }} event={selectedImgEvent} />
 
       <div className="flex flex-col gap-8">
 
-        {/* ── Page Section ── */}
+        {/* Page Section */}
         <div className="bg-white dark:bg-boxdark rounded-lg shadow-sm p-6 border border-stroke dark:border-strokedark">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">Community Page Section</h2>
@@ -476,10 +506,8 @@ const CommunityForm = () => {
             )}
         </div>
 
-        {/* ── Counters + Categories side by side ── */}
+        {/* Counters + Categories */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
-          {/* Counters */}
           <div className="bg-white dark:bg-boxdark rounded-lg shadow-sm p-6 border border-stroke dark:border-strokedark">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold">Counters</h2>
@@ -507,7 +535,6 @@ const CommunityForm = () => {
               )}
           </div>
 
-          {/* Categories */}
           <div className="bg-white dark:bg-boxdark rounded-lg shadow-sm p-6 border border-stroke dark:border-strokedark">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold">Event Categories</h2>
@@ -531,10 +558,9 @@ const CommunityForm = () => {
                 </div>
               )}
           </div>
-
         </div>
 
-        {/* ── Events ── */}
+        {/* Events */}
         <div className="bg-white dark:bg-boxdark rounded-lg shadow-sm p-6 border border-stroke dark:border-strokedark">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold">Events</h2>
@@ -569,7 +595,9 @@ const CommunityForm = () => {
                         </td>
                         <td className="py-3 px-3 font-medium text-gray-800 dark:text-white max-w-[150px] truncate">{ev.title}</td>
                         <td className="py-3 px-3 text-gray-500 capitalize">{ev.category_name || "—"}</td>
-                        <td className="py-3 px-3 text-gray-500 text-xs">{ev.date}</td>
+                        <td className="py-3 px-3 text-gray-500 text-xs">
+                          {ev.date ? new Date(ev.date).toLocaleDateString("en-NZ", { day: "numeric", month: "short", year: "numeric" }) : "—"}
+                        </td>
                         <td className="py-3 px-3 text-gray-500 text-xs">{ev.location}</td>
                         <td className="py-3 px-3">
                           <div className="flex flex-col gap-1">
@@ -581,18 +609,9 @@ const CommunityForm = () => {
                         </td>
                         <td className="py-3 px-3">
                           <div className="flex justify-end gap-1">
-                            <button onClick={() => { setSelectedImgEvent(ev); setImagesModal(true); }}
-                              className="text-gray-500 hover:text-purple-500 p-1.5 rounded transition" title="Manage gallery">
-                              <FiImage size={14} />
-                            </button>
-                            <button onClick={() => { setSelectedEvent(ev); setEventModal(true); }}
-                              className="text-blue-500 hover:text-blue-700 p-1.5 rounded transition" title="Edit">
-                              <FiEdit size={14} />
-                            </button>
-                            <button onClick={() => { if (confirm("Delete this event?")) delEvent.mutate(ev.id); }}
-                              className="text-red-500 hover:text-red-700 p-1.5 rounded transition" title="Delete">
-                              <FiTrash size={14} />
-                            </button>
+                            <button onClick={() => { setSelectedImgEvent(ev); setImagesModal(true); }} className="text-gray-500 hover:text-purple-500 p-1.5 rounded transition" title="Manage gallery"><FiImage size={14} /></button>
+                            <button onClick={() => { setSelectedEvent(ev); setEventModal(true); }} className="text-blue-500 hover:text-blue-700 p-1.5 rounded transition" title="Edit"><FiEdit size={14} /></button>
+                            <button onClick={() => { if (confirm("Delete this event?")) delEvent.mutate(ev.id); }} className="text-red-500 hover:text-red-700 p-1.5 rounded transition" title="Delete"><FiTrash size={14} /></button>
                           </div>
                         </td>
                       </tr>

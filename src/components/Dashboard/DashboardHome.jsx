@@ -103,8 +103,8 @@ const DashboardHome = () => {
       title:     "Images must be under 1 MB",
       description:
         "All uploaded images (banners, team photos, logos, blog covers) must not exceed 1 MB. Larger files slow down page load. Compress images before uploading.",
-      link:      "https://tinypng.com",
-      linkLabel: "Compress with TinyPNG",
+      link:      "https://www.iloveimg.com/compress-image",
+      linkLabel: "Compress with I Love Img",
     },
     {
       icon:      Zap,
