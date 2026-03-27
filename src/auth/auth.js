@@ -1,3 +1,10 @@
+import axios from "axios";
+
+const ApiUrl = process.env.NEXT_PUBLIC_API_URL;
+export const baseURL = `${ApiUrl}/api/admin`;
+
+axios.defaults.withCredentials = true;
+
 axios.interceptors.response.use(
   (response) => response,
   async (error) => {
