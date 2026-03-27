@@ -1,10 +1,3 @@
-import axios from "axios";
-
-const ApiUrl = process.env.NEXT_PUBLIC_API_URL;
-export const baseURL = `${ApiUrl}/api/admin`;
-
-axios.defaults.withCredentials = true;
-
 axios.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -19,9 +12,9 @@ axios.interceptors.response.use(
 
       try {
         await axios.post(`${baseURL}/auth/refresh/`);
-        // Small delay to allow browser to store the new cookie
-        await new Promise(resolve => setTimeout(resolve, 200));
-        return axios(original);
+        // Full reload instead of retry — forces browser to use new cookie
+        window.location.reload();
+        return new Promise(() => {}); // prevent further execution
       } catch {
         window.location.href = "/auth/signin";
       }
