@@ -5,7 +5,6 @@ export const baseURL = `${ApiUrl}/api/admin`;
 
 axios.defaults.withCredentials = true;
 
-// Auto-refresh on 401
 axios.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -14,12 +13,14 @@ axios.interceptors.response.use(
     if (
       error.response?.status === 401 &&
       !original._retry &&
-      !original.url?.includes("/auth/refresh/")  // ← prevent loop
+      !original.url?.includes("/auth/refresh/")
     ) {
       original._retry = true;
 
       try {
         await axios.post(`${baseURL}/auth/refresh/`);
+        // Small delay to allow browser to store the new cookie
+        await new Promise(resolve => setTimeout(resolve, 200));
         return axios(original);
       } catch {
         window.location.href = "/auth/signin";
